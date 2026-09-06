@@ -1,0 +1,49 @@
+name: PageAudit
+description: >-
+  An agent-first technical SEO auditor that checks a page's search appearance, sharing previews and technical issues,
+  prioritizes fixes, and delivers ready-to-apply patches for head tags, robots and sitemap. Every UI screen has an
+  equivalent endpoint and every resource carries its own API URL.
+url: https://raw.githubusercontent.com/api-evangelist/pageaudit/refs/heads/main/apis.yml
+created: '2026-09-05'
+modified: '2026-09-05'
+specificationVersion: '0.21'
+tags:
+  - Technical SEO
+  - SEO auditing
+  - Developer Tools
+  - Agent-native
+  - MCP
+  - x402
+apis:
+  - name: PageAudit API
+    description: >-
+      REST/HTTP API for one-shot technical SEO audits plus micro-tools, with a hosted MCP server, llms.txt, and OKF
+      knowledge bundle. OpenAPI 3.1.0 covering 38 endpoints and 26 structures.
+    humanURL: https://pageaudit.online/
+    baseURL: https://pageaudit.online
+    tags:
+      - Technical SEO
+      - SEO auditing
+      - Developer Tools
+      - Agent-native
+      - MCP
+      - x402
+    properties:
+      - type: OpenAPI
+        url: https://pageaudit.online/openapi.json
+      - type: Documentation
+        url: https://pageaudit.online/api/
+      - type: LLMsTxt
+        url: https://pageaudit.online/llms.txt
+      - type: AgentSkill
+        url: https://pageaudit.online/okf/index.md
+      - type: MCPServer
+        url: https://pageaudit.online/mcp
+maintainers:
+  - FN: PageAudit
+    url: https://pageaudit.online/
+generated:
+  by: apis.io/add
+  model: claude-opus-4-8
+  confidence: 98
+  at: '2026-09-05T11:48:17.911Z'
