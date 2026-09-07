@@ -1,0 +1,32 @@
+generated: '2026-09-07'
+method: searched
+source: https://pageaudit.online/llms.txt
+probed: https://pageaudit.online/api/gate
+limit_count: 3
+note: >-
+  Limits published in llms.txt and confirmed live 2026-09-07 against the machine-readable
+  endpoints — GET /api/gate returned free_allowance 10 / free_remaining 10 for the probing IP,
+  and GET /api/billing returned free_max_tabs 20. No X-RateLimit-* response headers are used:
+  the runtime signals are the gate endpoint, HTTP 402 with x402 `accepts[]` on allowance
+  exhaustion, and HTTP 429 on the hourly ceiling.
+limits:
+  - scope: per-IP per-day
+    resource: POST /api/audit (free tier)
+    limit: 10
+    window: 1 day
+    on_exhaustion: HTTP 402 with x402 `accepts[]` ($0.02 USDC) — or Turnstile for humans, or the 90-day trial
+  - scope: per-IP per-hour
+    resource: POST /api/audit (rate ceiling)
+    limit: 300
+    window: 1 hour
+    on_exhaustion: HTTP 429 — wait an hour
+  - scope: per-owner
+    resource: workspace tabs
+    limit: 20
+    window: standing allowance
+    on_exhaustion: HTTP 402 with x402 `accepts[]` ($0.05 USDC per extra tab)
+headers: []
+runtime_signal:
+  gate: https://pageaudit.online/api/gate
+  billing: https://pageaudit.online/api/billing
+  statuses: [402, 429]

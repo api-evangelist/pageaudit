@@ -1,0 +1,19 @@
+generated: '2026-09-07'
+method: generated
+note: >-
+  Generated from the OpenAPI + conventions; every step is grounded in a verified operationId.
+  PageAudit also maintains its own in-repo skill (.agents/skills/pageaudit/SKILL.md per llms.txt)
+  but it is not served over HTTP (probed 2026-09-07, 404), so these are catalog-authored.
+skills:
+  - file: pageaudit-audit-and-patch.md
+    name: Audit a page and apply the ready-made patch
+    api: openapi/pageaudit-openapi.json
+    operations: [audit_url, create_guest, get_audit, get_patch]
+  - file: pageaudit-tab-workspace.md
+    name: Track pages over time with the tab workspace
+    api: openapi/pageaudit-openapi.json
+    operations: [create_guest, create_tab, list_tabs, run_tab, post_api_auth_start, post_api_auth_verify, post_api_auth_claim]
+  - file: pageaudit-share-and-badge.md
+    name: Share a report and embed its score badge
+    api: openapi/pageaudit-openapi.json
+    operations: [post_api_audits_by_id_share, get_api_shared_by_slug, get_badge, delete_api_audits_by_id_share]

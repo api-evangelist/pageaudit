@@ -1,0 +1,188 @@
+generated: '2026-09-07'
+method: probed
+status: published
+source: https://pageaudit.online/mcp
+note: Live tools/list probed unauthenticated 2026-09-07 (HTTP 200, application/json) — real tool set with inputSchemas
+  saved verbatim below. GET /mcp returns a server card (streamable-http, protocol 2024-11-05, build f5ac3ca0). Registered
+  in the official MCP registry as online.pageaudit/pageaudit (status active, published 2026-09-05); the registry
+  signing key is served at /.well-known/mcp-registry-auth. Every tool is a call on the same REST API (operationId
+  = tool name); credentials (X-Guest-Token, Authorization, X-PAYMENT) are forwarded as headers.
+deployment:
+  mode: remote
+  endpoint: https://pageaudit.online/mcp
+  auth: none
+  verified: probed
+registry:
+  name: online.pageaudit/pageaudit
+  url: https://registry.modelcontextprotocol.io/v0/servers?search=pageaudit
+  status: active
+  published: '2026-09-05'
+server:
+  name: PageAudit
+  transport: streamable-http
+  protocol_version: '2024-11-05'
+  url: https://pageaudit.online/mcp
+  version: f5ac3ca0
+tools:
+- name: api_index
+  description: Discovers the whole PageAudit API (self-describing index).
+  inputSchema:
+    type: object
+    properties: {}
+  source_operation: openapi/pageaudit-openapi.json#api_index
+- name: health
+  description: Liveness and deployed build.
+  inputSchema:
+    type: object
+    properties: {}
+  source_operation: openapi/pageaudit-openapi.json#health
+- name: list_tools
+  description: Lists the micro-tools (title, meta, canonical, OG, JSON-LD…).
+  inputSchema:
+    type: object
+    properties: {}
+  source_operation: openapi/pageaudit-openapi.json#list_tools
+- name: get_tool
+  description: Copy and checks of one micro-tool by slug (e.g. title-tag-checker).
+  inputSchema:
+    type: object
+    properties:
+      slug:
+        type: string
+        description: tool slug
+    required:
+    - slug
+  source_operation: openapi/pageaudit-openapi.json#get_tool
+- name: audit_url
+  description: Audits a URL and returns the full report with the ready fix for each finding (`fixes`), without a
+    tab.
+  inputSchema:
+    type: object
+    properties:
+      url:
+        type: string
+        description: absolute URL to audit
+      guest_token:
+        type: string
+        description: optional pa_…
+    required:
+    - url
+  source_operation: openapi/pageaudit-openapi.json#audit_url
+- name: create_guest
+  description: Creates a guest token pa_… for the tab workspace.
+  inputSchema:
+    type: object
+    properties: {}
+  source_operation: openapi/pageaudit-openapi.json#create_guest
+- name: list_tabs
+  description: Lists the owner's tabs (guest or session).
+  inputSchema:
+    type: object
+    properties:
+      guest_token:
+        type: string
+    required:
+    - guest_token
+  source_operation: openapi/pageaudit-openapi.json#list_tabs
+- name: create_tab
+  description: Opens a tab for a URL in the workspace.
+  inputSchema:
+    type: object
+    properties:
+      guest_token:
+        type: string
+      url:
+        type: string
+        description: The URL the tab will follow.
+      alias:
+        type: string
+        description: Label to recognise the tab in the list.
+    required:
+    - guest_token
+    - url
+  source_operation: openapi/pageaudit-openapi.json#create_tab
+- name: run_tab
+  description: Re-audits the tab's URL.
+  inputSchema:
+    type: object
+    properties:
+      guest_token:
+        type: string
+      id:
+        type: string
+        description: ID of the tab to re-audit.
+    required:
+    - guest_token
+    - id
+  source_operation: openapi/pageaudit-openapi.json#run_tab
+- name: get_audit
+  description: Re-reads an audit already made, with `fixes` (the ready fix for each finding).
+  inputSchema:
+    type: object
+    properties:
+      guest_token:
+        type: string
+      id:
+        type: string
+        description: Audit ID, from `Audit.id`.
+    required:
+    - guest_token
+    - id
+  source_operation: openapi/pageaudit-openapi.json#get_audit
+- name: get_patch
+  description: 'The consolidated patch of an audit: <head> block to paste, files to create and templates with placeholders.
+    No model — only facts from the page.'
+  inputSchema:
+    type: object
+    properties:
+      guest_token:
+        type: string
+      id:
+        type: string
+        description: Audit ID, from `Audit.id`.
+    required:
+    - guest_token
+    - id
+  source_operation: openapi/pageaudit-openapi.json#get_patch
+- name: get_badge
+  description: Metadata and markdown of the SVG badge of a shared report.
+  inputSchema:
+    type: object
+    properties:
+      slug:
+        type: string
+        description: 24-char public slug
+    required:
+    - slug
+  source_operation: openapi/pageaudit-openapi.json#get_badge
+- name: billing
+  description: 'Free plan, prices, x402 parameters and the trial offer: sign-up with a confirmed e-mail = 90 days
+    without paywall (`trial` field; with a session it shows the state).'
+  inputSchema:
+    type: object
+    properties: {}
+  source_operation: openapi/pageaudit-openapi.json#billing
+- name: contact
+  description: 'Sends a support message. Agent: no captcha → 402 ($0.10 x402). Human: Turnstile. After the 1st agent
+    message there is backoff: 429 + Retry-After (60s → 2×, 1h cap; resets in 24h).'
+  inputSchema:
+    type: object
+    properties:
+      name:
+        type: string
+        description: What to call the person writing.
+      email:
+        type: string
+        description: Where to reply.
+      message:
+        type: string
+        description: What you want to say.
+      form_ts:
+        type: number
+        description: Date.now() of when the form opened (≥2s ago)
+    required:
+    - name
+    - email
+    - message
+    - form_ts
+  source_operation: openapi/pageaudit-openapi.json#contact

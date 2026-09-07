@@ -1,0 +1,26 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for PageAudit
+  version: 1.0.0
+extends: openapi/pageaudit-openapi.json
+actions:
+  - target: $.info
+    update:
+      x-apievangelist-profiled: '2026-09-07'
+      x-agent-first: true
+      x-payment-model: x402 (USDC on Base) with free tier and 90-day confirmed-e-mail trial
+      contact:
+        email: contato@pageaudit.online
+        url: https://pageaudit.online/developers
+  - target: $.info
+    update:
+      x-discovery:
+        api-catalog: https://pageaudit.online/.well-known/api-catalog
+        apis-json: https://pageaudit.online/apis.json
+        llms-txt: https://pageaudit.online/llms.txt
+        mcp: https://pageaudit.online/mcp
+        mcp-registry: online.pageaudit/pageaudit
+  - target: $.paths['/mcp'].post
+    update:
+      x-mcp-tools: 14
+      x-mcp-note: operationId equals MCP tool name across the surface; see mcp/pageaudit-tool-crosswalk.yml

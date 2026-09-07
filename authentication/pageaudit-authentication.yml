@@ -1,0 +1,47 @@
+generated: '2026-09-07'
+method: searched
+source: openapi/pageaudit-openapi.json
+docs: https://pageaudit.online/api/
+note: >-
+  Derived from the OpenAPI securitySchemes, then upgraded from the self-describing API index
+  (GET https://pageaudit.online/api/, fetched 2026-09-07), which documents four auth modes the
+  single bearerAuth scheme multiplexes. No OAuth; no API-key portal — tokens are minted by the
+  API itself (POST /api/guest, POST /api/auth/verify) or by an x402 payment (POST /api/credito).
+summary:
+  types:
+    - http
+  modes:
+    - none
+    - guest
+    - session
+    - credito
+schemes:
+  - name: bearerAuth
+    type: http
+    scheme: bearer
+    description: >-
+      Guest token (`POST /api/guest`) in `X-Guest-Token: pa_…`, `Authorization: Bearer pa_…` or
+      `?guest_token=pa_…`. A user session (`sess_…`) also works and takes precedence.
+    sources:
+      - openapi/pageaudit-openapi.json
+modes:
+  - mode: none
+    description: Public, no credential — discovery, one-shot audit, micro-tools, billing, gate, metrics.
+  - mode: guest
+    description: >-
+      Guest token `pa_…` from POST /api/guest; sent as `X-Guest-Token`, `Authorization: Bearer pa_…`
+      or `?guest_token=`. Grants the persistent tab workspace without an account.
+  - mode: session
+    description: >-
+      User session `sess_…` via e-mail code (POST /api/auth/start → POST /api/auth/verify);
+      `Authorization: Bearer sess_…`. Takes precedence over a guest token. Confirming the e-mail
+      grants a 90-day full-access trial.
+  - mode: credito
+    description: >-
+      Prepaid credit token `cred_…` (topped up once via x402 at POST /api/credito) in
+      `Authorization: Bearer cred_…` or the `X-Credito` header. A bearer of balance, not an account.
+payment:
+  scheme: x402
+  description: >-
+    Past the free allowance the API answers HTTP 402 with `accepts[]` (USDC on Base, chain 8453);
+    pay and repeat the same call with the `X-PAYMENT` header. Humans clear Turnstile instead.

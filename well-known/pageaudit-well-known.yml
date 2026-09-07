@@ -1,0 +1,46 @@
+generated: '2026-09-07'
+method: searched
+note: >-
+  Probed 2026-09-07 with a negative control (/.well-known/pageaudit-negative-control-9c4fe2a1.json
+  returned 404), so the 200s below are real documents, not a catch-all. PageAudit serves an RFC 9727
+  api-catalog, RFC 9116 security.txt, APIs.json (root and well-known), and its official MCP registry
+  key at /.well-known/mcp-registry-auth. All 404s are genuine misses.
+path_echo_control: passed
+hosts:
+  - host: https://pageaudit.online
+    documents:
+      - path: /.well-known/security.txt
+        status: 200
+        file: pageaudit-security.txt
+      - path: /.well-known/api-catalog
+        status: 200
+        file: pageaudit-api-catalog.json
+      - path: /apis.json
+        status: 200
+        file: pageaudit-apis-json.json
+      - path: /.well-known/apis.json
+        status: 200
+        file: pageaudit-apis-json.json
+      - path: /.well-known/mcp-registry-auth
+        status: 200
+        file: pageaudit-mcp-registry-auth.txt
+      - path: /apis.yml
+        status: 404
+      - path: /.well-known/openid-configuration
+        status: 404
+      - path: /.well-known/oauth-authorization-server
+        status: 404
+      - path: /.well-known/oauth-protected-resource
+        status: 404
+      - path: /.well-known/ai-plugin.json
+        status: 404
+      - path: /.well-known/ucp.json
+        status: 404
+      - path: /.well-known/acp.json
+        status: 404
+      - path: /.well-known/aauth-resource.json
+        status: 404
+      - path: /.well-known/agent-card.json
+        status: 404
+      - path: /.well-known/agent.json
+        status: 404

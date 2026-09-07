@@ -1,0 +1,31 @@
+generated: '2026-09-07'
+method: searched
+source: https://pageaudit.online/llms.txt
+note: >-
+  PageAudit ships no JS component library; its embeddable surfaces are hosted. Verified 2026-09-07:
+  the SVG score badge (with README-ready markdown from the API), the noindex shared-report page,
+  and the indexable micro-tool landings.
+components:
+  - family: score badge
+    kind: hosted embeddable image
+    description: >-
+      SVG score badge of a shared audit at GET /badge/{slug}.svg, meant to be pasted into the
+      audited project's README; GET /api/badge/{slug} returns the metadata and the ready-made
+      markdown snippet.
+    urls:
+      - https://pageaudit.online/badge/{slug}.svg
+      - https://pageaudit.online/api/badge/{slug}
+  - family: shared report page
+    kind: hosted page
+    description: >-
+      HTML page of a shared audit at GET /r/{slug} (served with noindex); its machine twin is
+      GET /api/shared/{slug}, credential-free JSON.
+    urls:
+      - https://pageaudit.online/r/{slug}
+  - family: micro-tool landings
+    kind: hosted pages
+    description: >-
+      One indexable landing per SEO check (title tag, meta description, canonical, Open Graph,
+      JSON-LD, …) at /tools/{slug}, all driven by the same audit engine; JSON list at GET /api/tools.
+    urls:
+      - https://pageaudit.online/tools

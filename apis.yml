@@ -4,8 +4,9 @@ description: >-
   prioritizes fixes, and delivers ready-to-apply patches for head tags, robots and sitemap. Every UI screen has an
   equivalent endpoint and every resource carries its own API URL.
 url: https://raw.githubusercontent.com/api-evangelist/pageaudit/refs/heads/main/apis.yml
+image: https://pageaudit.online/icon.svg
 created: '2026-09-05'
-modified: '2026-09-05'
+modified: '2026-09-07'
 specificationVersion: '0.21'
 tags:
   - Technical SEO
@@ -19,6 +20,7 @@ apis:
     description: >-
       REST/HTTP API for one-shot technical SEO audits plus micro-tools, with a hosted MCP server, llms.txt, and OKF
       knowledge bundle. OpenAPI 3.1.0 covering 38 endpoints and 26 structures.
+    image: https://pageaudit.online/icon.svg
     humanURL: https://pageaudit.online/
     baseURL: https://pageaudit.online
     tags:
@@ -31,8 +33,12 @@ apis:
     properties:
       - type: OpenAPI
         url: https://pageaudit.online/openapi.json
+      - type: OpenAPI
+        url: openapi/pageaudit-openapi.json
       - type: Documentation
         url: https://pageaudit.online/api/
+      - type: APIReference
+        url: https://pageaudit.online/developers
       - type: LLMsTxt
         url: https://pageaudit.online/llms.txt
       - type: AgentSkill
@@ -42,8 +48,65 @@ apis:
 maintainers:
   - FN: PageAudit
     url: https://pageaudit.online/
-generated:
+    email: contato@pageaudit.online
+x-generated:
   by: apis.io/add
   model: claude-opus-4-8
   confidence: 98
   at: '2026-09-05T11:48:17.911Z'
+common:
+- type: Website
+  url: https://pageaudit.online/
+- type: ToolCrosswalk
+  url: mcp/pageaudit-tool-crosswalk.yml
+- type: VulnerabilityDisclosure
+  url: security/pageaudit-vulnerability-disclosure.yml
+- type: Security
+  url: https://pageaudit.online/.well-known/security.txt
+- type: DomainSecurity
+  url: security/pageaudit-domain-security.yml
+- type: AgenticAccess
+  url: agentic-access/pageaudit-agentic-access.yml
+- type: Authentication
+  url: authentication/pageaudit-authentication.yml
+- type: WellKnown
+  url: well-known/pageaudit-well-known.yml
+- type: SecurityTxt
+  url: well-known/pageaudit-security.txt
+- type: MCPServer
+  url: mcp/pageaudit-mcp.yml
+- type: LLMsTxt
+  url: llms/pageaudit-llms.txt
+- type: AgentSkill
+  url: skills/_index.yml
+- type: Overlay
+  url: overlays/pageaudit-openapi-overlay.yaml
+- type: Conformance
+  url: conformance/pageaudit-conformance.yml
+- type: ErrorCatalog
+  url: errors/pageaudit-problem-types.yml
+- type: Lifecycle
+  url: lifecycle/pageaudit-lifecycle.yml
+- type: Conventions
+  url: conventions/pageaudit-conventions.yml
+- type: Idempotency
+  url: conventions/pageaudit-conventions.yml
+- type: Components
+  url: components/pageaudit-components.yml
+- type: DataModel
+  url: data-model/pageaudit-data-model.yml
+- type: Plans
+  url: plans/pageaudit-plans-pricing.yml
+- type: Pricing
+  url: https://pageaudit.online/api/billing
+- type: RateLimits
+  url: rate-limits/pageaudit-rate-limits.yml
+- type: TermsOfService
+  url: https://pageaudit.online/terms
+- type: PrivacyPolicy
+  url: https://pageaudit.online/privacy
+x-enrichment:
+  date: '2026-09-07'
+  status: enriched
+  artifacts_added: 26
+  pass: local-v3

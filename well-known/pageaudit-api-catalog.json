@@ -1,0 +1,76 @@
+{
+  "linkset": [
+    {
+      "anchor": "https://pageaudit.online/.well-known/api-catalog",
+      "item": [
+        {
+          "href": "https://pageaudit.online/api/"
+        },
+        {
+          "href": "https://pageaudit.online/mcp"
+        }
+      ],
+      "describedby": [
+        {
+          "href": "https://pageaudit.online/apis.json",
+          "type": "application/json",
+          "title": "APIs.json"
+        }
+      ]
+    },
+    {
+      "anchor": "https://pageaudit.online/api/",
+      "service-desc": [
+        {
+          "href": "https://pageaudit.online/openapi.json",
+          "type": "application/json",
+          "title": "OpenAPI 3"
+        }
+      ],
+      "service-doc": [
+        {
+          "href": "https://pageaudit.online/llms.txt",
+          "type": "text/plain",
+          "title": "Guia para agentes de IA"
+        },
+        {
+          "href": "https://pageaudit.online/llms-full.txt",
+          "type": "text/plain",
+          "title": "Referência completa da API"
+        },
+        {
+          "href": "https://pageaudit.online/okf/index.md",
+          "type": "text/markdown",
+          "title": "Bundle OKF"
+        }
+      ]
+    },
+    {
+      "anchor": "https://pageaudit.online/mcp",
+      "service-desc": [
+        {
+          "href": "https://pageaudit.online/mcp",
+          "type": "application/json",
+          "title": "MCP (streamable HTTP)"
+        }
+      ],
+      "service-doc": [
+        {
+          "href": "https://pageaudit.online/llms.txt",
+          "type": "text/plain",
+          "title": "Guia para agentes de IA"
+        },
+        {
+          "href": "https://pageaudit.online/llms-full.txt",
+          "type": "text/plain",
+          "title": "Referência completa da API"
+        },
+        {
+          "href": "https://pageaudit.online/okf/index.md",
+          "type": "text/markdown",
+          "title": "Bundle OKF"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,4 @@
+Contact: mailto:contato@pageaudit.online
+Expires: 2027-09-07T00:00:00Z
+Preferred-Languages: en, pt
+Canonical: https://pageaudit.online/.well-known/security.txt

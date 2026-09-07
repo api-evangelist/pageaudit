@@ -1,0 +1,144 @@
+generated: '2026-09-07'
+method: derived
+source: mcp/pageaudit-mcp.yml + openapi/pageaudit-openapi.json
+note: 'PageAudit publishes operationId = MCP tool name as an explicit design contract (stated in llms.txt and the
+  OpenAPI description), and the live tools/list confirmed it: all 14 tools bind 1:1 to REST operations by exact
+  name. The remaining REST operations are UI/HTML twins, auth, sharing and billing surfaces with no MCP tool.'
+surfaces:
+  openapi: openapi/pageaudit-openapi.json
+  mcp:
+    url: https://pageaudit.online/mcp
+    gated: false
+    note: tools/list answers unauthenticated
+  graphql: null
+crosswalk:
+- tool: api_index
+  category: discovery
+  rest:
+  - api_index
+  binding: rest
+  confidence: high
+  note: GET /api/
+- tool: health
+  category: discovery
+  rest:
+  - health
+  binding: rest
+  confidence: high
+  note: GET /api/health
+- tool: list_tools
+  category: micro-tools
+  rest:
+  - list_tools
+  binding: rest
+  confidence: high
+  note: GET /api/tools
+- tool: get_tool
+  category: micro-tools
+  rest:
+  - get_tool
+  binding: rest
+  confidence: high
+  note: GET /api/tools/{slug}
+- tool: audit_url
+  category: audit
+  rest:
+  - audit_url
+  binding: rest
+  confidence: high
+  note: POST /api/audit
+- tool: create_guest
+  category: workspace
+  rest:
+  - create_guest
+  binding: rest
+  confidence: high
+  note: POST /api/guest
+- tool: list_tabs
+  category: workspace
+  rest:
+  - list_tabs
+  binding: rest
+  confidence: high
+  note: GET /api/tabs
+- tool: create_tab
+  category: workspace
+  rest:
+  - create_tab
+  binding: rest
+  confidence: high
+  note: POST /api/tabs
+- tool: run_tab
+  category: workspace
+  rest:
+  - run_tab
+  binding: rest
+  confidence: high
+  note: POST /api/tabs/{id}/run
+- tool: get_audit
+  category: audit
+  rest:
+  - get_audit
+  binding: rest
+  confidence: high
+  note: GET /api/audits/{id}
+- tool: get_patch
+  category: audit
+  rest:
+  - get_patch
+  binding: rest
+  confidence: high
+  note: GET /api/audits/{id}/patch
+- tool: get_badge
+  category: sharing
+  rest:
+  - get_badge
+  binding: rest
+  confidence: high
+  note: GET /api/badge/{slug}
+- tool: billing
+  category: billing
+  rest:
+  - billing
+  binding: rest
+  confidence: high
+  note: GET /api/billing
+- tool: contact
+  category: support
+  rest:
+  - contact
+  binding: rest
+  confidence: high
+  note: POST /api/contact
+mcp_only: []
+rest_only:
+- delete_api_audits_by_id_share
+- delete_api_tabs_by_id
+- get_api_credito
+- get_api_gate
+- get_api_me
+- get_api_metrics
+- get_api_shared_by_slug
+- get_api_tabs_by_id
+- get_apis_json
+- get_badge_by_slug_svg
+- get_okf_by_arquivo
+- get_r_by_slug
+- get_tools
+- get_tools_by_slug
+- get_well_known_by_arquivo
+- patch_api_tabs_by_id
+- post_api_audits_by_id_share
+- post_api_auth_claim
+- post_api_auth_logout
+- post_api_auth_start
+- post_api_auth_verify
+- post_api_credito
+- post_api_visit
+- post_mcp
+coverage:
+  tools_named: 14
+  tools_bound: 14
+  mcp_only: 0
+  rest_ops_total: 38
+  rest_ops_with_tool: 14

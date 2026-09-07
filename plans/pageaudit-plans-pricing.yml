@@ -1,0 +1,36 @@
+generated: '2026-09-07'
+method: probed
+source: https://pageaudit.online/api/billing
+plan_count: 3
+note: >-
+  Pricing is published machine-readably at GET /api/billing (probed 2026-09-07, HTTP 200) and in
+  llms.txt. There is no plans page and no subscription: the model is a free tier plus x402
+  pay-per-call (USDC on Base, chain 8453, facilitator facilitator.payai.network) plus a prepaid
+  credit token, with a 90-day free full-access trial for a confirmed e-mail sign-up.
+plans:
+  - name: Free
+    price: 0
+    currency: USD
+    billing_period: none
+    included:
+      - 10 audits per IP per day (POST /api/audit)
+      - 20 workspace tabs per owner
+      - all discovery, micro-tools, badge and shared-report endpoints
+  - name: Pay-per-call (x402)
+    price: metered
+    currency: USDC
+    billing_period: per call
+    rates:
+      - item: audit beyond the daily allowance
+        price_usd: 0.02
+      - item: tab beyond the allowance
+        price_usd: 0.05
+      - item: agent contact (POST /api/contact without Turnstile)
+        price_usd: 0.10
+    mechanism: HTTP 402 with `accepts[]`; pay and repeat the call with `X-PAYMENT`. Prepaid credit token via POST /api/credito.
+  - name: Trial (confirmed e-mail)
+    price: 0
+    currency: USD
+    billing_period: 90 days
+    included:
+      - full access without the paywall for 90 days after confirming the e-mail

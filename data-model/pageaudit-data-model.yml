@@ -1,0 +1,66 @@
+generated: '2026-09-07'
+method: derived
+source: openapi/pageaudit-openapi.json
+note: >-
+  Entity graph derived from the 26 component schemas and their $ref links (schema names are
+  Portuguese: Achado = finding, Correcao = fix, Aba = tab, Compartilhamento = share, Conta =
+  account, Ferramenta = micro-tool). The core object is the Audit — one immutable row per run —
+  navigated from a Workspace of Abas (tabs); each finding carries its own fix, and a Patch
+  consolidates them into ready-to-apply files.
+entities:
+  - name: Audit
+    description: One audit run of a URL — summary, findings, fixes, quota and hypermedia links.
+    relationships:
+      - {type: has_many, target: Achado, via: issues}
+      - {type: has_one, target: ResumoPagina, via: summary}
+      - {type: has_one, target: ContagemAchados, via: counts}
+      - {type: has_many, target: Correcao, via: fixes}
+      - {type: has_one, target: CotaAudit, via: quota}
+      - {type: has_one, target: LinksAudit, via: api}
+  - name: AuditGravado
+    description: A stored audit re-read via GET /api/audits/{id}.
+    relationships:
+      - {type: has_many, target: Achado, via: issues}
+      - {type: has_many, target: Correcao, via: fixes}
+      - {type: has_one, target: ResumoPagina, via: summary}
+      - {type: has_one, target: ContagemAchados, via: counts}
+  - name: Patch
+    description: The consolidated fix of an audit — head block, files to create, owner templates.
+    relationships:
+      - {type: has_many, target: ArquivoPatch, via: files}
+      - {type: has_many, target: MoldePatch, via: templates}
+      - {type: has_one, target: ResumoPatch, via: summary}
+      - {type: belongs_to, target: AuditGravado, via: audit id in the path}
+  - name: Workspace
+    description: The owner's tab workspace (guest or session), with the active tab rehydrated.
+    relationships:
+      - {type: has_many, target: Aba, via: tabs}
+      - {type: has_one, target: AuditGravado, via: active tab result}
+      - {type: has_one, target: Gate, via: gate}
+  - name: Aba
+    description: A persistent tab bound to one URL; each run appends to the audit history.
+    relationships:
+      - {type: has_many, target: AuditGravado, via: runs}
+  - name: Compartilhamento
+    description: A published share of an audit under a non-enumerable slug.
+    relationships:
+      - {type: belongs_to, target: AuditGravado, via: audit id}
+      - {type: has_one, target: Badge, via: slug}
+  - name: Billing
+    description: Machine-readable pricing and x402 configuration.
+    relationships:
+      - {type: has_one, target: Precos, via: prices}
+      - {type: has_one, target: Uso, via: usage}
+      - {type: has_one, target: Trial, via: trial}
+  - name: Conta
+    description: The session's account with its last 50 audits and trial state.
+    relationships:
+      - {type: has_many, target: AuditGravado, via: audits}
+  - name: Ferramenta
+    description: One micro-tool (title-tag-checker, …) driven by the same audit engine.
+    relationships: []
+id_conventions:
+  guest_token: 'pa_…'
+  session_token: 'sess_…'
+  credit_token: 'cred_…'
+  shared_report: non-enumerable slug

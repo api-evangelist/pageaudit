@@ -1,0 +1,38 @@
+generated: '2026-09-07'
+method: derived
+source: openapi/pageaudit-openapi.json
+format: custom
+envelope: '{ error, detail? } JSON body with the HTTP status code'
+note: >-
+  Derived from the OpenAPI 4xx responses (fetched 2026-09-07) and the conventions block in the
+  self-describing API index. Errors are plain JSON, not RFC 9457 problem+json. The 402 is not a
+  failure: it is the x402 payment challenge and carries `accepts[]` so an agent can pay and retry
+  the same call with `X-PAYMENT`.
+problems:
+  - status: 400
+    title: Bad request
+    detail: Body is not JSON, or `url` missing / not http. Also malformed e-mail or code on the auth endpoints.
+    source_operation: openapi/pageaudit-openapi.json#audit_url
+  - status: 401
+    title: Missing or invalid credential
+    detail: No credential, or an invalid one, on a guest/session/credito-gated endpoint.
+    source_operation: openapi/pageaudit-openapi.json#get_audit
+  - status: 402
+    title: Payment required (x402)
+    detail: >-
+      Quota exceeded. The response carries `accepts[]` (x402, USDC on Base): pay and repeat the
+      same call with `X-PAYMENT`. Prices: extra audit $0.02, extra tab $0.05, agent contact $0.10.
+      Free alternatives: Turnstile (humans) or the 90-day confirmed-e-mail trial.
+    source_operation: openapi/pageaudit-openapi.json#audit_url
+  - status: 403
+    title: Wrong Turnstile answer
+    detail: A wrong captcha is not an invitation to pay — solve Turnstile again.
+    source_operation: openapi/pageaudit-openapi.json#audit_url
+  - status: 404
+    title: Not found
+    detail: Unknown audit/tab id, tool slug, shared-report slug, or a file outside the OKF bundle.
+    source_operation: openapi/pageaudit-openapi.json#get_okf_by_arquivo
+  - status: 429
+    title: Hourly rate ceiling
+    detail: Past MAX_AUDITS_PER_HOUR (300/hour) on the same IP. Wait an hour. Also throttles the auth code endpoints.
+    source_operation: openapi/pageaudit-openapi.json#audit_url

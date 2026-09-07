@@ -1,0 +1,48 @@
+generated: '2026-09-07'
+method: searched
+source: live probes of pageaudit.online, 2026-09-07
+note: >-
+  PageAudit's discovery surface is unusually standards-dense for a small provider: RFC 9727
+  api-catalog, RFC 9116 security.txt, APIs.json 0.19, an official MCP registry entry, and x402
+  payment signaling were all verified live. Errors are a custom envelope, not RFC 9457. No OAuth,
+  OIDC, SCIM, OData or GraphQL surface exists.
+standards:
+  - id: rfc9727-api-catalog
+    conforms: true
+    evidence: >-
+      GET https://pageaudit.online/.well-known/api-catalog returned HTTP 200 with a linkset
+      (anchor/item/service-desc/describedby) covering the API, the MCP endpoint, OpenAPI, llms.txt
+      and apis.json — saved at well-known/pageaudit-api-catalog.json.
+  - id: rfc9116-security-txt
+    conforms: true
+    evidence: >-
+      GET https://pageaudit.online/.well-known/security.txt returned HTTP 200 with Contact,
+      Expires, Preferred-Languages and Canonical fields — saved at well-known/pageaudit-security.txt.
+  - id: apis-json
+    conforms: true
+    evidence: >-
+      GET https://pageaudit.online/apis.json (and /.well-known/apis.json) returned a valid
+      APIs.json 0.19 document with apis[] — saved at well-known/pageaudit-apis-json.json.
+  - id: openapi-3.1
+    conforms: true
+    evidence: openapi/pageaudit-openapi.json declares openapi 3.1.0 with 33 paths and 26 schemas.
+  - id: mcp
+    conforms: true
+    evidence: >-
+      POST https://pageaudit.online/mcp answered tools/list unauthenticated (HTTP 200, JSON-RPC
+      2.0, streamable-http, protocol 2024-11-05, 14 tools); registered in the official MCP
+      registry as online.pageaudit/pageaudit with the signing key at /.well-known/mcp-registry-auth.
+  - id: x402
+    conforms: true
+    evidence: >-
+      GET /api/billing publishes the full x402 configuration (provider x402, USDC on Base, chain
+      8453, facilitator, pay_to, per-call prices); over-quota calls answer HTTP 402 with accepts[].
+  - id: llms-txt
+    conforms: true
+    evidence: GET https://pageaudit.online/llms.txt returned HTTP 200 — saved at llms/pageaudit-llms.txt.
+  - id: rfc9457-problem-details
+    conforms: false
+    evidence: errors use a custom `{ error, detail? }` JSON envelope, not application/problem+json.
+  - id: oauth2
+    conforms: false
+    evidence: no oauth2 securityScheme; auth is bearer guest/session/prepaid-credit tokens.

@@ -1,0 +1,20 @@
+generated: '2026-09-07'
+method: searched
+source: https://pageaudit.online/api/
+note: >-
+  PageAudit runs continuous deployment: there is no versioned API train, no changelog page, no
+  status page and no deprecation policy published. The liveness/version surface is GET /api/health,
+  which returns the deployed commit hash (build f5ac3ca0 observed 2026-09-07); the OpenAPI
+  info.version carries the same hash. No Sunset/Deprecation headers appear in the spec.
+versioning:
+  scheme: continuous-deployment build hash (no URI/header versioning)
+  current: f5ac3ca0
+  docs: https://pageaudit.online/api/health
+deprecation:
+  policy_url: null
+  sunset_header: false
+sla:
+  url: null
+status_page: null
+health_endpoint: https://pageaudit.online/api/health
+deprecated_operations: []
