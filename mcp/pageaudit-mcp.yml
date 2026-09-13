@@ -2,16 +2,22 @@ generated: '2026-09-07'
 method: probed
 status: published
 source: https://pageaudit.online/mcp
-note: Live tools/list probed unauthenticated 2026-09-07 (HTTP 200, application/json) — real tool set with inputSchemas
-  saved verbatim below. GET /mcp returns a server card (streamable-http, protocol 2024-11-05, build f5ac3ca0). Registered
-  in the official MCP registry as online.pageaudit/pageaudit (status active, published 2026-09-05); the registry
-  signing key is served at /.well-known/mcp-registry-auth. Every tool is a call on the same REST API (operationId
-  = tool name); credentials (X-Guest-Token, Authorization, X-PAYMENT) are forwarded as headers.
+note: Live tools/list probed unauthenticated 2026-09-07 (HTTP 200, application/json) — real tool set with
+  inputSchemas saved verbatim below. GET /mcp returns a server card (streamable-http, protocol 2024-11-05,
+  build f5ac3ca0). Registered in the official MCP registry as online.pageaudit/pageaudit (status active,
+  published 2026-09-05); the registry signing key is served at /.well-known/mcp-registry-auth. Every tool
+  is a call on the same REST API (operationId = tool name); credentials (X-Guest-Token, Authorization,
+  X-PAYMENT) are forwarded as headers.
 deployment:
   mode: remote
   endpoint: https://pageaudit.online/mcp
   auth: none
   verified: probed
+  probe_prior: (never probed)
+  probe: live
+  probe_why: live
+  checked: '2026-09-11'
+  source: claimed-backlog re-probe 2026-09-11
 registry:
   name: online.pageaudit/pageaudit
   url: https://registry.modelcontextprotocol.io/v0/servers?search=pageaudit
@@ -54,8 +60,8 @@ tools:
     - slug
   source_operation: openapi/pageaudit-openapi.json#get_tool
 - name: audit_url
-  description: Audits a URL and returns the full report with the ready fix for each finding (`fixes`), without a
-    tab.
+  description: Audits a URL and returns the full report with the ready fix for each finding (`fixes`),
+    without a tab.
   inputSchema:
     type: object
     properties:
@@ -130,8 +136,8 @@ tools:
     - id
   source_operation: openapi/pageaudit-openapi.json#get_audit
 - name: get_patch
-  description: 'The consolidated patch of an audit: <head> block to paste, files to create and templates with placeholders.
-    No model — only facts from the page.'
+  description: 'The consolidated patch of an audit: <head> block to paste, files to create and templates
+    with placeholders. No model — only facts from the page.'
   inputSchema:
     type: object
     properties:
@@ -156,15 +162,15 @@ tools:
     - slug
   source_operation: openapi/pageaudit-openapi.json#get_badge
 - name: billing
-  description: 'Free plan, prices, x402 parameters and the trial offer: sign-up with a confirmed e-mail = 90 days
-    without paywall (`trial` field; with a session it shows the state).'
+  description: 'Free plan, prices, x402 parameters and the trial offer: sign-up with a confirmed e-mail
+    = 90 days without paywall (`trial` field; with a session it shows the state).'
   inputSchema:
     type: object
     properties: {}
   source_operation: openapi/pageaudit-openapi.json#billing
 - name: contact
-  description: 'Sends a support message. Agent: no captcha → 402 ($0.10 x402). Human: Turnstile. After the 1st agent
-    message there is backoff: 429 + Retry-After (60s → 2×, 1h cap; resets in 24h).'
+  description: 'Sends a support message. Agent: no captcha → 402 ($0.10 x402). Human: Turnstile. After
+    the 1st agent message there is backoff: 429 + Retry-After (60s → 2×, 1h cap; resets in 24h).'
   inputSchema:
     type: object
     properties:
