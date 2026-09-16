@@ -12,39 +12,369 @@ tags:
   - Technical SEO
   - SEO auditing
   - Developer Tools
+  - agent-native
+  - MCP
+  - x402
+tags_raw:
+  - Technical SEO
+  - SEO auditing
+  - Developer Tools
   - Agent-native
   - MCP
   - x402
 apis:
-  - name: PageAudit API
-    description: >-
-      REST/HTTP API for one-shot technical SEO audits plus micro-tools, with a hosted MCP server, llms.txt, and OKF
-      knowledge bundle. OpenAPI 3.1.0 covering 38 endpoints and 26 structures.
-    image: https://pageaudit.online/icon.svg
-    humanURL: https://pageaudit.online/
-    baseURL: https://pageaudit.online
-    tags:
-      - Technical SEO
-      - SEO auditing
-      - Developer Tools
-      - Agent-native
-      - MCP
-      - x402
-    properties:
-      - type: OpenAPI
-        url: https://pageaudit.online/openapi.json
-      - type: OpenAPI
-        url: openapi/pageaudit-openapi.json
-      - type: Documentation
-        url: https://pageaudit.online/api/
-      - type: APIReference
-        url: https://pageaudit.online/developers
-      - type: LLMsTxt
-        url: https://pageaudit.online/llms.txt
-      - type: AgentSkill
-        url: https://pageaudit.online/okf/index.md
-      - type: MCPServer
-        url: https://pageaudit.online/mcp
+- aid: pageaudit:pageaudit-apis-json-api
+  name: PageAudit Apis.json API
+  description: The Apis.json API from PageAudit — 1 operation(s) for apis.json.
+  humanURL: https://pageaudit.online/
+  baseURL: https://pageaudit.online
+  tags:
+  - Apis.json
+  properties:
+  - type: OpenAPI
+    url: openapi/pageaudit-apis-json-api-openapi.yml
+  - type: Documentation
+    url: https://pageaudit.online/api/
+  - type: APIReference
+    url: https://pageaudit.online/developers
+  - type: LLMsTxt
+    url: https://pageaudit.online/llms.txt
+- aid: pageaudit:pageaudit-audit-api
+  name: PageAudit Audit API
+  description: The Audit API from PageAudit — 1 operation(s) for audit.
+  humanURL: https://pageaudit.online/
+  baseURL: https://pageaudit.online
+  tags:
+  - Audit
+  properties:
+  - type: OpenAPI
+    url: openapi/pageaudit-audit-api-openapi.yml
+  - type: Documentation
+    url: https://pageaudit.online/api/
+  - type: APIReference
+    url: https://pageaudit.online/developers
+  - type: LLMsTxt
+    url: https://pageaudit.online/llms.txt
+- aid: pageaudit:pageaudit-audits-api
+  name: PageAudit Audits API
+  description: The Audits API from PageAudit — 3 operation(s) for audits.
+  humanURL: https://pageaudit.online/
+  baseURL: https://pageaudit.online
+  tags:
+  - Audits
+  properties:
+  - type: OpenAPI
+    url: openapi/pageaudit-audits-api-openapi.yml
+  - type: Documentation
+    url: https://pageaudit.online/api/
+  - type: APIReference
+    url: https://pageaudit.online/developers
+  - type: LLMsTxt
+    url: https://pageaudit.online/llms.txt
+- aid: pageaudit:pageaudit-auth-api
+  name: PageAudit Auth API
+  description: The Auth API from PageAudit — 4 operation(s) for auth.
+  humanURL: https://pageaudit.online/
+  baseURL: https://pageaudit.online
+  tags:
+  - Auth
+  properties:
+  - type: OpenAPI
+    url: openapi/pageaudit-auth-api-openapi.yml
+  - type: Documentation
+    url: https://pageaudit.online/api/
+  - type: APIReference
+    url: https://pageaudit.online/developers
+  - type: LLMsTxt
+    url: https://pageaudit.online/llms.txt
+- aid: pageaudit:pageaudit-badge-api
+  name: PageAudit Badge API
+  description: The Badge API from PageAudit — 2 operation(s) for badge.
+  humanURL: https://pageaudit.online/
+  baseURL: https://pageaudit.online
+  tags:
+  - Badge
+  properties:
+  - type: OpenAPI
+    url: openapi/pageaudit-badge-api-openapi.yml
+  - type: Documentation
+    url: https://pageaudit.online/api/
+  - type: APIReference
+    url: https://pageaudit.online/developers
+  - type: LLMsTxt
+    url: https://pageaudit.online/llms.txt
+- aid: pageaudit:pageaudit-billing-api
+  name: PageAudit Billing API
+  description: The Billing API from PageAudit — 1 operation(s) for billing.
+  humanURL: https://pageaudit.online/
+  baseURL: https://pageaudit.online
+  tags:
+  - Billing
+  properties:
+  - type: OpenAPI
+    url: openapi/pageaudit-billing-api-openapi.yml
+  - type: Documentation
+    url: https://pageaudit.online/api/
+  - type: APIReference
+    url: https://pageaudit.online/developers
+  - type: LLMsTxt
+    url: https://pageaudit.online/llms.txt
+- aid: pageaudit:pageaudit-contact-api
+  name: PageAudit Contact API
+  description: The Contact API from PageAudit — 1 operation(s) for contact.
+  humanURL: https://pageaudit.online/
+  baseURL: https://pageaudit.online
+  tags:
+  - Contact
+  properties:
+  - type: OpenAPI
+    url: openapi/pageaudit-contact-api-openapi.yml
+  - type: Documentation
+    url: https://pageaudit.online/api/
+  - type: APIReference
+    url: https://pageaudit.online/developers
+  - type: LLMsTxt
+    url: https://pageaudit.online/llms.txt
+- aid: pageaudit:pageaudit-credito-api
+  name: PageAudit Credito API
+  description: The Credito API from PageAudit — 1 operation(s) for credito.
+  humanURL: https://pageaudit.online/
+  baseURL: https://pageaudit.online
+  tags:
+  - Credito
+  properties:
+  - type: OpenAPI
+    url: openapi/pageaudit-credito-api-openapi.yml
+  - type: Documentation
+    url: https://pageaudit.online/api/
+  - type: APIReference
+    url: https://pageaudit.online/developers
+  - type: LLMsTxt
+    url: https://pageaudit.online/llms.txt
+- aid: pageaudit:pageaudit-gate-api
+  name: PageAudit Gate API
+  description: The Gate API from PageAudit — 1 operation(s) for gate.
+  humanURL: https://pageaudit.online/
+  baseURL: https://pageaudit.online
+  tags:
+  - Gate
+  properties:
+  - type: OpenAPI
+    url: openapi/pageaudit-gate-api-openapi.yml
+  - type: Documentation
+    url: https://pageaudit.online/api/
+  - type: APIReference
+    url: https://pageaudit.online/developers
+  - type: LLMsTxt
+    url: https://pageaudit.online/llms.txt
+- aid: pageaudit:pageaudit-guest-api
+  name: PageAudit Guest API
+  description: The Guest API from PageAudit — 1 operation(s) for guest.
+  humanURL: https://pageaudit.online/
+  baseURL: https://pageaudit.online
+  tags:
+  - Guest
+  properties:
+  - type: OpenAPI
+    url: openapi/pageaudit-guest-api-openapi.yml
+  - type: Documentation
+    url: https://pageaudit.online/api/
+  - type: APIReference
+    url: https://pageaudit.online/developers
+  - type: LLMsTxt
+    url: https://pageaudit.online/llms.txt
+- aid: pageaudit:pageaudit-health-api
+  name: PageAudit Health API
+  description: The Health API from PageAudit — 1 operation(s) for health.
+  humanURL: https://pageaudit.online/
+  baseURL: https://pageaudit.online
+  tags:
+  - Health
+  properties:
+  - type: OpenAPI
+    url: openapi/pageaudit-health-api-openapi.yml
+  - type: Documentation
+    url: https://pageaudit.online/api/
+  - type: APIReference
+    url: https://pageaudit.online/developers
+  - type: LLMsTxt
+    url: https://pageaudit.online/llms.txt
+- aid: pageaudit:pageaudit-mcp-api
+  name: PageAudit MCP API
+  description: The Mcp API from PageAudit — 1 operation(s) for mcp.
+  humanURL: https://pageaudit.online/
+  baseURL: https://pageaudit.online
+  tags:
+  - Mcp
+  properties:
+  - type: OpenAPI
+    url: openapi/pageaudit-mcp-api-openapi.yml
+  - type: Documentation
+    url: https://pageaudit.online/api/
+  - type: APIReference
+    url: https://pageaudit.online/developers
+  - type: LLMsTxt
+    url: https://pageaudit.online/llms.txt
+- aid: pageaudit:pageaudit-me-api
+  name: PageAudit Me API
+  description: The Me API from PageAudit — 1 operation(s) for me.
+  humanURL: https://pageaudit.online/
+  baseURL: https://pageaudit.online
+  tags:
+  - Me
+  properties:
+  - type: OpenAPI
+    url: openapi/pageaudit-me-api-openapi.yml
+  - type: Documentation
+    url: https://pageaudit.online/api/
+  - type: APIReference
+    url: https://pageaudit.online/developers
+  - type: LLMsTxt
+    url: https://pageaudit.online/llms.txt
+- aid: pageaudit:pageaudit-metrics-api
+  name: PageAudit Metrics API
+  description: The Metrics API from PageAudit — 1 operation(s) for metrics.
+  humanURL: https://pageaudit.online/
+  baseURL: https://pageaudit.online
+  tags:
+  - Metrics
+  properties:
+  - type: OpenAPI
+    url: openapi/pageaudit-metrics-api-openapi.yml
+  - type: Documentation
+    url: https://pageaudit.online/api/
+  - type: APIReference
+    url: https://pageaudit.online/developers
+  - type: LLMsTxt
+    url: https://pageaudit.online/llms.txt
+- aid: pageaudit:pageaudit-okf-api
+  name: PageAudit Okf API
+  description: The Okf API from PageAudit — 1 operation(s) for okf.
+  humanURL: https://pageaudit.online/
+  baseURL: https://pageaudit.online
+  tags:
+  - Okf
+  properties:
+  - type: OpenAPI
+    url: openapi/pageaudit-okf-api-openapi.yml
+  - type: Documentation
+    url: https://pageaudit.online/api/
+  - type: APIReference
+    url: https://pageaudit.online/developers
+  - type: LLMsTxt
+    url: https://pageaudit.online/llms.txt
+- aid: pageaudit:pageaudit-pageaudit-api
+  name: PageAudit Page Audit API
+  description: The PageAudit API from PageAudit — 1 operation(s) for pageaudit.
+  humanURL: https://pageaudit.online/
+  baseURL: https://pageaudit.online
+  tags:
+  - PageAudit
+  properties:
+  - type: OpenAPI
+    url: openapi/pageaudit-pageaudit-api-openapi.yml
+  - type: Documentation
+    url: https://pageaudit.online/api/
+  - type: APIReference
+    url: https://pageaudit.online/developers
+  - type: LLMsTxt
+    url: https://pageaudit.online/llms.txt
+- aid: pageaudit:pageaudit-r-api
+  name: PageAudit R API
+  description: The R API from PageAudit — 1 operation(s) for r.
+  humanURL: https://pageaudit.online/
+  baseURL: https://pageaudit.online
+  tags:
+  - R
+  properties:
+  - type: OpenAPI
+    url: openapi/pageaudit-r-api-openapi.yml
+  - type: Documentation
+    url: https://pageaudit.online/api/
+  - type: APIReference
+    url: https://pageaudit.online/developers
+  - type: LLMsTxt
+    url: https://pageaudit.online/llms.txt
+- aid: pageaudit:pageaudit-shared-api
+  name: PageAudit Shared API
+  description: The Shared API from PageAudit — 1 operation(s) for shared.
+  humanURL: https://pageaudit.online/
+  baseURL: https://pageaudit.online
+  tags:
+  - Shared
+  properties:
+  - type: OpenAPI
+    url: openapi/pageaudit-shared-api-openapi.yml
+  - type: Documentation
+    url: https://pageaudit.online/api/
+  - type: APIReference
+    url: https://pageaudit.online/developers
+  - type: LLMsTxt
+    url: https://pageaudit.online/llms.txt
+- aid: pageaudit:pageaudit-tabs-api
+  name: PageAudit Tabs API
+  description: The Tabs API from PageAudit — 3 operation(s) for tabs.
+  humanURL: https://pageaudit.online/
+  baseURL: https://pageaudit.online
+  tags:
+  - Tabs
+  properties:
+  - type: OpenAPI
+    url: openapi/pageaudit-tabs-api-openapi.yml
+  - type: Documentation
+    url: https://pageaudit.online/api/
+  - type: APIReference
+    url: https://pageaudit.online/developers
+  - type: LLMsTxt
+    url: https://pageaudit.online/llms.txt
+- aid: pageaudit:pageaudit-tools-api
+  name: PageAudit Tools API
+  description: The Tools API from PageAudit — 4 operation(s) for tools.
+  humanURL: https://pageaudit.online/
+  baseURL: https://pageaudit.online
+  tags:
+  - Tools
+  properties:
+  - type: OpenAPI
+    url: openapi/pageaudit-tools-api-openapi.yml
+  - type: Documentation
+    url: https://pageaudit.online/api/
+  - type: APIReference
+    url: https://pageaudit.online/developers
+  - type: LLMsTxt
+    url: https://pageaudit.online/llms.txt
+- aid: pageaudit:pageaudit-visit-api
+  name: PageAudit Visit API
+  description: The Visit API from PageAudit — 1 operation(s) for visit.
+  humanURL: https://pageaudit.online/
+  baseURL: https://pageaudit.online
+  tags:
+  - Visit
+  properties:
+  - type: OpenAPI
+    url: openapi/pageaudit-visit-api-openapi.yml
+  - type: Documentation
+    url: https://pageaudit.online/api/
+  - type: APIReference
+    url: https://pageaudit.online/developers
+  - type: LLMsTxt
+    url: https://pageaudit.online/llms.txt
+- aid: pageaudit:pageaudit-well-known-api
+  name: PageAudit .well Known API
+  description: The .well Known API from PageAudit — 1 operation(s) for .well known.
+  humanURL: https://pageaudit.online/
+  baseURL: https://pageaudit.online
+  tags:
+  - .well Known
+  properties:
+  - type: OpenAPI
+    url: openapi/pageaudit-well-known-api-openapi.yml
+  - type: Documentation
+    url: https://pageaudit.online/api/
+  - type: APIReference
+    url: https://pageaudit.online/developers
+  - type: LLMsTxt
+    url: https://pageaudit.online/llms.txt
 maintainers:
   - FN: PageAudit
     url: https://pageaudit.online/
@@ -55,6 +385,10 @@ x-generated:
   confidence: 98
   at: '2026-09-05T11:48:17.911Z'
 common:
+- type: AgentSkill
+  url: https://pageaudit.online/okf/index.md
+- type: MCPServer
+  url: https://pageaudit.online/mcp
 - type: Website
   url: https://pageaudit.online/
 - type: ToolCrosswalk
