@@ -29,6 +29,8 @@ apis:
   humanURL: https://pageaudit.online/
   baseURL: https://pageaudit.online
   tags:
+  - APIs.json
+  tags_raw:
   - Apis.json
   properties:
   - type: OpenAPI
@@ -61,6 +63,8 @@ apis:
   humanURL: https://pageaudit.online/
   baseURL: https://pageaudit.online
   tags:
+  - Audit
+  tags_raw:
   - Audits
   properties:
   - type: OpenAPI
@@ -77,6 +81,8 @@ apis:
   humanURL: https://pageaudit.online/
   baseURL: https://pageaudit.online
   tags:
+  - Authentication
+  tags_raw:
   - Auth
   properties:
   - type: OpenAPI
@@ -205,6 +211,8 @@ apis:
   humanURL: https://pageaudit.online/
   baseURL: https://pageaudit.online
   tags:
+  - MCP
+  tags_raw:
   - Mcp
   properties:
   - type: OpenAPI
