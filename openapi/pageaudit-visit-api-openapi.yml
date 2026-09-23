@@ -1,0 +1,61 @@
+openapi: 3.2.0
+info:
+  title: PageAudit Visit API
+  version: f5ac3ca0
+  description: 'Technical SEO auditor that ships the fix. Main client: AI agents. Browsable index at GET /api/.'
+servers:
+- url: https://pageaudit.online
+tags:
+- name: Visit
+paths:
+  /api/visit:
+    post:
+      operationId: post_api_visit
+      summary: Ping from the interface that increments the day's visits.
+      description: 'Smoke does not count: `X-MM-Smoke`, User-Agent `mm-smoke` or `smoke: true` in the body come in as `counted: false`.
+
+        Returns: { ok, counted, reason? }'
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                p:
+                  type: string
+                  description: Path of the visited page.
+                smoke:
+                  type: boolean
+                  description: '`true` marks the call as a test and it does not enter the count.'
+            example:
+              p: /
+      responses:
+        '200':
+          description: '{ ok, counted, reason? }'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    description: Always `true`.
+                  counted:
+                    type: boolean
+                    description: Whether the visit entered the day's count.
+                  reason:
+                    type: string
+                    description: Why it did not count, when `counted` is `false`.
+                required:
+                - ok
+                - counted
+      tags:
+      - Visit
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: 'Guest token (`POST /api/guest`) in `X-Guest-Token: pa_…`, `Authorization: Bearer pa_…` or `?guest_token=pa_…`. A user session (`sess_…`) also works and takes precedence.'

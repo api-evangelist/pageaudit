@@ -1,0 +1,91 @@
+openapi: 3.2.0
+info:
+  title: PageAudit Badge API
+  version: f5ac3ca0
+  description: 'Technical SEO auditor that ships the fix. Main client: AI agents. Browsable index at GET /api/.'
+servers:
+- url: https://pageaudit.online
+tags:
+- name: Badge
+paths:
+  /api/badge/{slug}:
+    get:
+      operationId: get_badge
+      summary: Metadata of the score badge, including the markdown ready for the README
+      description: 'Returns: { slug, score, label, available, markdown, _links }'
+      security: []
+      parameters:
+      - name: slug
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: '{ slug, score, label, available, markdown, _links }'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Badge'
+        '404':
+          description: 'Unknown slug. Revoked is different: it returns 200 with `available: false`.'
+      tags:
+      - Badge
+  /badge/{slug}.svg:
+    get:
+      operationId: get_badge_by_slug_svg
+      summary: SVG score badge, to paste in the README of the audited project
+      description: 'A revoked share returns **200** with the grey `n/a` SVG — the same box, so the README of whoever pasted it does not end up with a broken image.
+
+        Returns: `image/svg+xml` — the badge, coloured by the score or grey `n/a` if revoked.'
+      security: []
+      parameters:
+      - name: slug
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: '`image/svg+xml` — the badge, coloured by the score or grey `n/a` if revoked.'
+        '404':
+          description: Malformed slug.
+      tags:
+      - Badge
+components:
+  schemas:
+    Badge:
+      type: object
+      properties:
+        slug:
+          type: string
+          description: Slug of the shared report.
+        score:
+          type: integer
+          description: Score shown in the badge.
+          nullable: true
+        label:
+          type: string
+          description: Text on the left of the badge.
+        available:
+          type: boolean
+          description: '`false` when the share was revoked — the SVG turns grey `n/a`.'
+        markdown:
+          type: string
+          description: The markdown line ready to paste in the README.
+        _links:
+          type: object
+          description: The SVG and the report.
+      required:
+      - slug
+      - score
+      - label
+      - available
+      - markdown
+      - _links
+      description: The score badge metadata, to build the README markdown.
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: 'Guest token (`POST /api/guest`) in `X-Guest-Token: pa_…`, `Authorization: Bearer pa_…` or `?guest_token=pa_…`. A user session (`sess_…`) also works and takes precedence.'

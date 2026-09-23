@@ -1,0 +1,372 @@
+openapi: 3.2.0
+info:
+  title: PageAudit Audit API
+  version: f5ac3ca0
+  description: 'Technical SEO auditor that ships the fix. Main client: AI agents. Browsable index at GET /api/.'
+servers:
+- url: https://pageaudit.online
+tags:
+- name: Audit
+paths:
+  /api/audit:
+    post:
+      operationId: audit_url
+      summary: Audits a URL and returns the full report in one call, without a token or a tab
+      description: 'This is the product for agents. Past the IP''s daily allowance the response is **402 with `accepts[]`** — pay and repeat the same call. It also carries `sitekey` and `code`, which are the path for a human with a browser; an agent ignores those two. The free alternative: sign up and confirm the e-mail to get the trial.
+
+        Returns: { id, score, issues[{severity,code,message}], summary{finalUrl,status,contentType,title,metaDescription,canonical,robots,viewport,charset,lang,favicon,faviconSource,h1s,openGraph,twitter,jsonLdCount,jsonLdBlocks,jsonLdDropped,jsonLdTypes,images,links,words,hreflang,legacy,redirects,robotsTxt,sitemap}, counts{errors,warnings,info}, headers, htmlTruncated, jsonLd, jsonLdStored, truncated, fixes[{code,severity,classe,alvo,snippet,arquivo,fonte,nota}], quota{free_per_day,price_usd}, _links{self?,patch,share?,api_index} }'
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                url:
+                  type: string
+                  description: The page to audit, `http` or `https`.
+                guest_token:
+                  type: string
+                  description: Guest `pa_…` so the audit is tied to it and shows up in the tabs.
+                cf_turnstile_response:
+                  type: string
+                  description: Turnstile response; it is the human path, agents use x402.
+              required:
+              - url
+            example:
+              url: https://example.com/
+              guest_token: pa_… (optional, ties the audit)
+      responses:
+        '200':
+          description: '{ id, score, issues[{severity,code,message}], summary{finalUrl,status,contentType,title,metaDescription,canonical,robots,viewport,charset,lang,favicon,faviconSource,h1s,openGraph,twitter,jsonLdCount,jsonLdBlocks,jsonLdDropped,jsonLdTypes,images,links,words,hreflang,legacy,redirects,robotsTxt,sitemap}, counts{errors,warnings,info}, headers, htmlTruncated, jsonLd, jsonLdStored, truncated, fixes[{code,severity,classe,alvo,snippet,arquivo,fonte,nota}], quota{free_per_day,price_usd}, _links{self?,patch,share?,api_index} }'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Audit'
+        '400':
+          description: Body is not JSON, or `url` missing/not http.
+        '402':
+          description: 'Quota exceeded. The response carries `accepts[]` (x402, USDC on Base): pay and repeat the same call with `X-PAYMENT`.'
+        '403':
+          description: Wrong Turnstile answer. A wrong captcha is not an invitation to pay.
+        '429':
+          description: Past `MAX_AUDITS_PER_HOUR` on the same IP. Wait an hour.
+      tags:
+      - Audit
+components:
+  schemas:
+    CotaAudit:
+      type: object
+      properties:
+        free_per_day:
+          type: integer
+          description: Free audits per IP per day.
+        price_usd:
+          type: number
+          description: Price of an audit beyond the allowance, in USD.
+      required:
+      - free_per_day
+      - price_usd
+      description: How much is still free and what it costs past that.
+    Achado:
+      type: object
+      properties:
+        severity:
+          type: string
+          description: Severity of the finding.
+        code:
+          type: string
+          description: Stable check code, e.g. `title_missing`. It is what you filter by.
+        message:
+          type: string
+          description: The finding in one sentence, ready to show a person.
+      required:
+      - severity
+      - code
+      - message
+      description: A problem (or a pass) found on the page.
+    Audit:
+      type: object
+      properties:
+        id:
+          type: string
+          description: ID of the stored audit; `null` when the database was unavailable.
+          nullable: true
+        score:
+          type: integer
+          description: Score from 0 to 100, computed from the findings below.
+        issues:
+          type: array
+          items:
+            $ref: '#/components/schemas/Achado'
+          description: Everything found, from most to least severe.
+        summary:
+          allOf:
+          - $ref: '#/components/schemas/ResumoPagina'
+          description: 'What the page declares: title, meta, canonical, OG, headings, links…'
+        counts:
+          allOf:
+          - $ref: '#/components/schemas/ContagemAchados'
+          description: How many findings of each severity.
+        headers:
+          type: object
+          description: 'Every header of the target''s response. `Set-Cookie` is removed on purpose: it is a third party''s credential.'
+        htmlTruncated:
+          type: boolean
+          description: '`true` when the page passed 2 MB and was read only that far.'
+        jsonLd:
+          type: array
+          items:
+            type: object
+          description: The raw JSON-LD blocks, as they were on the page.
+        jsonLdStored:
+          type: integer
+          description: How many blocks survived the size cap — compare with `summary.jsonLdBlocks`.
+        truncated:
+          type: array
+          items:
+            type: string
+          description: 'What was cut and why: `jsonld_size`, `jsonld_nodes_over_50`, `result_size`. Empty means nothing cut.'
+        fixes:
+          type: array
+          items:
+            $ref: '#/components/schemas/Correcao'
+          description: The ready fix of each finding, without a model — paste, fill in or decide. The consolidated one is at `_links.patch`.
+        quota:
+          allOf:
+          - $ref: '#/components/schemas/CotaAudit'
+          description: How much is still free and what it costs past that.
+        _links:
+          allOf:
+          - $ref: '#/components/schemas/LinksAudit'
+          description: This audit, the patch, the share and the API index.
+      required:
+      - id
+      - score
+      - issues
+      - summary
+      - counts
+      - headers
+      - htmlTruncated
+      - jsonLd
+      - jsonLdStored
+      - truncated
+      - fixes
+      - quota
+      - _links
+      description: 'The report of one audit: score, findings and everything observed on the page.'
+    ResumoPagina:
+      type: object
+      properties:
+        finalUrl:
+          type: string
+          description: URL after following every redirect.
+        status:
+          type: integer
+          description: Final HTTP status of the target.
+        contentType:
+          type: string
+          description: Content-Type of the final response.
+          nullable: true
+        title:
+          type: string
+          description: Content of `<title>`.
+          nullable: true
+        metaDescription:
+          type: string
+          description: Content of `<meta name=description>`.
+          nullable: true
+        canonical:
+          type: string
+          description: Canonical URL declared by the page.
+          nullable: true
+        robots:
+          type: string
+          description: Content of `<meta name=robots>`.
+          nullable: true
+        viewport:
+          type: string
+          description: Content of `<meta name=viewport>`.
+          nullable: true
+        charset:
+          type: string
+          description: Declared encoding.
+          nullable: true
+        lang:
+          type: string
+          description: Language declared in `<html lang>`.
+          nullable: true
+        favicon:
+          type: string
+          description: URL of the favicon found.
+          nullable: true
+        faviconSource:
+          type: string
+          description: 'How the favicon was found: declared or by the default path.'
+          nullable: true
+        h1s:
+          type: array
+          items:
+            type: string
+          description: Every `<h1>` on the page, in order.
+        openGraph:
+          type: object
+          description: The `og:*` tags found, key by key.
+        twitter:
+          type: object
+          description: The `twitter:*` tags found.
+        jsonLdCount:
+          type: integer
+          description: How many JSON-LD nodes the page had.
+        jsonLdBlocks:
+          type: integer
+          description: How many `<script type=application/ld+json>` blocks existed.
+        jsonLdDropped:
+          type: boolean
+          description: '`true` when nodes were dropped for passing the cap.'
+        jsonLdTypes:
+          type: array
+          items:
+            type: string
+          description: The `@type`s found, e.g. `Organization`, `WebSite`.
+        images:
+          type: object
+          description: Image count and how many have no `alt`.
+        links:
+          type: object
+          description: Count of internal, external and text-less links.
+        words:
+          type: integer
+          description: Words in the visible content.
+        hreflang:
+          type: array
+          items:
+            type: object
+          description: The declared language alternates.
+        legacy:
+          type: object
+          description: Old markup still present (e.g. `<font>`, layout tables).
+        redirects:
+          type: array
+          items:
+            type: object
+          description: The redirect chain followed to the final URL.
+        robotsTxt:
+          type: object
+          description: What the origin's `robots.txt` says about this URL.
+        sitemap:
+          type: object
+          description: Whether the URL appears in the sitemap the origin declares.
+      required:
+      - finalUrl
+      - status
+      - contentType
+      - title
+      - metaDescription
+      - canonical
+      - robots
+      - viewport
+      - charset
+      - lang
+      - favicon
+      - faviconSource
+      - h1s
+      - openGraph
+      - twitter
+      - jsonLdCount
+      - jsonLdBlocks
+      - jsonLdDropped
+      - jsonLdTypes
+      - images
+      - links
+      - words
+      - hreflang
+      - legacy
+      - redirects
+      - robotsTxt
+      - sitemap
+      description: Everything the page declares about itself. It is the most consulted object of the API.
+    Correcao:
+      type: object
+      properties:
+        code:
+          type: string
+          description: The same `code` as the finding (`Achado.code`).
+        severity:
+          type: string
+          description: Severity of the source finding.
+        classe:
+          type: string
+          description: '`deterministico` comes whole from the page; `molde` has a `{{…}}` placeholder; `sem_patch` is an instruction.'
+        alvo:
+          type: string
+          description: 'Where to apply: `head`, `corpo`, `img`, `arquivo` or `pagina` (instruction).'
+        snippet:
+          type: string
+          description: The ready tag (or with a placeholder). `null` for files and for `sem_patch`.
+          nullable: true
+        arquivo:
+          type: object
+          description: '`path` and `conteudo` when the fix is a file at the host root.'
+          nullable: true
+        fonte:
+          type: string
+          description: Where the value came from, or what the page already had (for the template or to check the cut).
+          nullable: true
+        nota:
+          type: string
+          description: How to apply, or what to decide.
+          nullable: true
+      required:
+      - code
+      - severity
+      - classe
+      - alvo
+      - snippet
+      - arquivo
+      - fonte
+      - nota
+      description: The ready fix of one finding. `classe` says whether it is to paste, to fill in or to decide.
+    ContagemAchados:
+      type: object
+      properties:
+        errors:
+          type: integer
+          description: Serious findings.
+        warnings:
+          type: integer
+          description: Findings that deserve attention.
+        info:
+          type: integer
+          description: Observations without severity.
+      required:
+      - errors
+      - warnings
+      - info
+      description: How many findings of each severity — the summary that fits in a badge.
+    LinksAudit:
+      type: object
+      properties:
+        self:
+          type: string
+          description: This audit, to re-read without re-auditing.
+        patch:
+          type: string
+          description: '`GET /api/audits/:id/patch` — the consolidated patch of this audit.'
+          nullable: true
+        share:
+          type: string
+          description: Where to publish this audit under a public slug.
+        api_index:
+          type: string
+          description: Self-describing API index.
+      required:
+      - patch
+      - api_index
+      description: Addresses of the audit just created. Without a stored `id`, only `api_index` comes.
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: 'Guest token (`POST /api/guest`) in `X-Guest-Token: pa_…`, `Authorization: Bearer pa_…` or `?guest_token=pa_…`. A user session (`sess_…`) also works and takes precedence.'

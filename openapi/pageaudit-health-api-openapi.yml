@@ -1,0 +1,49 @@
+openapi: 3.2.0
+info:
+  title: PageAudit Health API
+  version: f5ac3ca0
+  description: 'Technical SEO auditor that ships the fix. Main client: AI agents. Browsable index at GET /api/.'
+servers:
+- url: https://pageaudit.online
+tags:
+- name: Health
+paths:
+  /api/health:
+    get:
+      operationId: health
+      summary: Liveness and the commit deployed right now — it is how the smoke waits for its…
+      description: 'Returns: { ok, app, build, ts }'
+      security: []
+      responses:
+        '200':
+          description: '{ ok, app, build, ts }'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    description: Always `true` when the Worker answers.
+                  app:
+                    type: string
+                    description: Product name.
+                  build:
+                    type: string
+                    description: Deployed commit; CI passes the short SHA on deploy.
+                  ts:
+                    type: string
+                    description: Time of the response (UTC, ISO-8601).
+                required:
+                - ok
+                - app
+                - build
+                - ts
+      tags:
+      - Health
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: 'Guest token (`POST /api/guest`) in `X-Guest-Token: pa_…`, `Authorization: Bearer pa_…` or `?guest_token=pa_…`. A user session (`sess_…`) also works and takes precedence.'

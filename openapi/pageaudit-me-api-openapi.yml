@@ -1,0 +1,361 @@
+openapi: 3.2.0
+info:
+  title: PageAudit Me API
+  version: f5ac3ca0
+  description: 'Technical SEO auditor that ships the fix. Main client: AI agents. Browsable index at GET /api/.'
+servers:
+- url: https://pageaudit.online
+tags:
+- name: Me
+paths:
+  /api/me:
+    get:
+      operationId: get_api_me
+      summary: The session's account, its last 50 audits and the state of the trial
+      description: 'Returns: { user{id,email}, audits[{audit_id,url,score,summary,counts,issues,fixes,jsonLd,headers,truncated,share_slug,created_at}], trial{days,active,days_left?,ends_at,granted?} }'
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: '{ user{id,email}, audits[{audit_id,url,score,summary,counts,issues,fixes,jsonLd,headers,truncated,share_slug,created_at}], trial{days,active,days_left?,ends_at,granted?} }'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    allOf:
+                    - $ref: '#/components/schemas/Conta'
+                    description: The person who owns the session.
+                  audits:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/AuditGravado'
+                    description: The account's 50 most recent audits.
+                  trial:
+                    allOf:
+                    - $ref: '#/components/schemas/Trial'
+                    description: 'The account''s trial: how many days, whether active and when it ends.'
+                required:
+                - user
+                - audits
+                - trial
+        '401':
+          description: No credential, or an invalid one. See this endpoint's auth.
+      tags:
+      - Me
+components:
+  schemas:
+    Conta:
+      type: object
+      properties:
+        id:
+          type: string
+          description: ID of the account.
+        email:
+          type: string
+          description: E-mail confirmed by code.
+      required:
+      - id
+      - email
+      description: The person behind the session.
+    Achado:
+      type: object
+      properties:
+        severity:
+          type: string
+          description: Severity of the finding.
+        code:
+          type: string
+          description: Stable check code, e.g. `title_missing`. It is what you filter by.
+        message:
+          type: string
+          description: The finding in one sentence, ready to show a person.
+      required:
+      - severity
+      - code
+      - message
+      description: A problem (or a pass) found on the page.
+    Trial:
+      type: object
+      properties:
+        days:
+          type: integer
+          description: Trial length in days.
+        active:
+          type: boolean
+          description: Whether it is in force now.
+        days_left:
+          type: integer
+          description: How many days remain.
+        ends_at:
+          type: string
+          description: When it ends (UTC).
+          nullable: true
+        granted:
+          type: boolean
+          description: '`true` when THIS call granted the trial.'
+      required:
+      - days
+      - active
+      - ends_at
+      description: The paywall-free period that confirming the e-mail grants. It is the alternative to paying.
+    ResumoPagina:
+      type: object
+      properties:
+        finalUrl:
+          type: string
+          description: URL after following every redirect.
+        status:
+          type: integer
+          description: Final HTTP status of the target.
+        contentType:
+          type: string
+          description: Content-Type of the final response.
+          nullable: true
+        title:
+          type: string
+          description: Content of `<title>`.
+          nullable: true
+        metaDescription:
+          type: string
+          description: Content of `<meta name=description>`.
+          nullable: true
+        canonical:
+          type: string
+          description: Canonical URL declared by the page.
+          nullable: true
+        robots:
+          type: string
+          description: Content of `<meta name=robots>`.
+          nullable: true
+        viewport:
+          type: string
+          description: Content of `<meta name=viewport>`.
+          nullable: true
+        charset:
+          type: string
+          description: Declared encoding.
+          nullable: true
+        lang:
+          type: string
+          description: Language declared in `<html lang>`.
+          nullable: true
+        favicon:
+          type: string
+          description: URL of the favicon found.
+          nullable: true
+        faviconSource:
+          type: string
+          description: 'How the favicon was found: declared or by the default path.'
+          nullable: true
+        h1s:
+          type: array
+          items:
+            type: string
+          description: Every `<h1>` on the page, in order.
+        openGraph:
+          type: object
+          description: The `og:*` tags found, key by key.
+        twitter:
+          type: object
+          description: The `twitter:*` tags found.
+        jsonLdCount:
+          type: integer
+          description: How many JSON-LD nodes the page had.
+        jsonLdBlocks:
+          type: integer
+          description: How many `<script type=application/ld+json>` blocks existed.
+        jsonLdDropped:
+          type: boolean
+          description: '`true` when nodes were dropped for passing the cap.'
+        jsonLdTypes:
+          type: array
+          items:
+            type: string
+          description: The `@type`s found, e.g. `Organization`, `WebSite`.
+        images:
+          type: object
+          description: Image count and how many have no `alt`.
+        links:
+          type: object
+          description: Count of internal, external and text-less links.
+        words:
+          type: integer
+          description: Words in the visible content.
+        hreflang:
+          type: array
+          items:
+            type: object
+          description: The declared language alternates.
+        legacy:
+          type: object
+          description: Old markup still present (e.g. `<font>`, layout tables).
+        redirects:
+          type: array
+          items:
+            type: object
+          description: The redirect chain followed to the final URL.
+        robotsTxt:
+          type: object
+          description: What the origin's `robots.txt` says about this URL.
+        sitemap:
+          type: object
+          description: Whether the URL appears in the sitemap the origin declares.
+      required:
+      - finalUrl
+      - status
+      - contentType
+      - title
+      - metaDescription
+      - canonical
+      - robots
+      - viewport
+      - charset
+      - lang
+      - favicon
+      - faviconSource
+      - h1s
+      - openGraph
+      - twitter
+      - jsonLdCount
+      - jsonLdBlocks
+      - jsonLdDropped
+      - jsonLdTypes
+      - images
+      - links
+      - words
+      - hreflang
+      - legacy
+      - redirects
+      - robotsTxt
+      - sitemap
+      description: Everything the page declares about itself. It is the most consulted object of the API.
+    AuditGravado:
+      type: object
+      properties:
+        audit_id:
+          type: string
+          description: ID of the audit.
+        url:
+          type: string
+          description: Final audited URL, after following the redirects.
+        score:
+          type: integer
+          description: Score from 0 to 100.
+        summary:
+          allOf:
+          - $ref: '#/components/schemas/ResumoPagina'
+          description: What the page declared at the time of the run.
+          nullable: true
+        counts:
+          allOf:
+          - $ref: '#/components/schemas/ContagemAchados'
+          description: How many findings of each severity.
+        issues:
+          type: array
+          items:
+            $ref: '#/components/schemas/Achado'
+          description: Everything found in that run.
+        fixes:
+          type: array
+          items:
+            $ref: '#/components/schemas/Correcao'
+          description: The ready fix of each finding; an audit stored before this existed gets the computation on read.
+        jsonLd:
+          type: array
+          items:
+            type: object
+          description: The raw JSON-LD blocks stored.
+        headers:
+          type: object
+          description: Headers of the target's response, as they were in the run.
+        truncated:
+          type: array
+          items:
+            type: string
+          description: What was cut by size when storing.
+        share_slug:
+          type: string
+          description: Public slug, if this audit was shared.
+          nullable: true
+        created_at:
+          type: string
+          description: When the run happened (UTC).
+      required:
+      - audit_id
+      - url
+      - score
+      - summary
+      - counts
+      - issues
+      - fixes
+      - jsonLd
+      - headers
+      - truncated
+      - share_slug
+      - created_at
+      description: The same report re-read from the database. It has no `quota` and no `_links` (it is a read, not a run) and gains the date and the share slug.
+    Correcao:
+      type: object
+      properties:
+        code:
+          type: string
+          description: The same `code` as the finding (`Achado.code`).
+        severity:
+          type: string
+          description: Severity of the source finding.
+        classe:
+          type: string
+          description: '`deterministico` comes whole from the page; `molde` has a `{{…}}` placeholder; `sem_patch` is an instruction.'
+        alvo:
+          type: string
+          description: 'Where to apply: `head`, `corpo`, `img`, `arquivo` or `pagina` (instruction).'
+        snippet:
+          type: string
+          description: The ready tag (or with a placeholder). `null` for files and for `sem_patch`.
+          nullable: true
+        arquivo:
+          type: object
+          description: '`path` and `conteudo` when the fix is a file at the host root.'
+          nullable: true
+        fonte:
+          type: string
+          description: Where the value came from, or what the page already had (for the template or to check the cut).
+          nullable: true
+        nota:
+          type: string
+          description: How to apply, or what to decide.
+          nullable: true
+      required:
+      - code
+      - severity
+      - classe
+      - alvo
+      - snippet
+      - arquivo
+      - fonte
+      - nota
+      description: The ready fix of one finding. `classe` says whether it is to paste, to fill in or to decide.
+    ContagemAchados:
+      type: object
+      properties:
+        errors:
+          type: integer
+          description: Serious findings.
+        warnings:
+          type: integer
+          description: Findings that deserve attention.
+        info:
+          type: integer
+          description: Observations without severity.
+      required:
+      - errors
+      - warnings
+      - info
+      description: How many findings of each severity — the summary that fits in a badge.
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: 'Guest token (`POST /api/guest`) in `X-Guest-Token: pa_…`, `Authorization: Bearer pa_…` or `?guest_token=pa_…`. A user session (`sess_…`) also works and takes precedence.'

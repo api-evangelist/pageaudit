@@ -1,0 +1,86 @@
+openapi: 3.2.0
+info:
+  title: PageAudit Metrics API
+  version: f5ac3ca0
+  description: 'Technical SEO auditor that ships the fix. Main client: AI agents. Browsable index at GET /api/.'
+servers:
+- url: https://pageaudit.online
+tags:
+- name: Metrics
+paths:
+  /api/metrics:
+    get:
+      operationId: get_api_metrics
+      summary: Metrics of the last 7 days and the most frequent findings across audits.
+      description: 'Without credentials it returns visits, usage and accounts. With `METRICS_TOKEN` as Bearer it adds `payments` — and only on Base mainnet, because staging numbers on a finance panel mislead.
+
+        Returns: { app, today, today_visits, today_contacts?, days, usage, accounts, financeiro?, payments?, achados }'
+      security: []
+      parameters:
+      - name: Authorization
+        in: header
+        required: false
+        schema:
+          type: string
+        description: '`Bearer <METRICS_TOKEN>` to include the finance block.'
+      responses:
+        '200':
+          description: '{ app, today, today_visits, today_contacts?, days, usage, accounts, financeiro?, payments?, achados }'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Metricas'
+      tags:
+      - Metrics
+components:
+  schemas:
+    Metricas:
+      type: object
+      properties:
+        app:
+          type: string
+          description: Product name.
+        today:
+          type: string
+          description: Reference day (UTC, YYYY-MM-DD).
+        today_visits:
+          type: integer
+          description: Visits counted today.
+        today_contacts:
+          type: integer
+          description: 'Contact messages received today. Only with `METRICS_TOKEN`: contact does not leave without a token.'
+        days:
+          type: array
+          items:
+            type: object
+          description: One record per day of the window, with the counts of each metric.
+        usage:
+          type: object
+          description: Usage per product resource — here, audits and tabs.
+        accounts:
+          type: object
+          description: Total guests and accounts.
+        financeiro:
+          type: object
+          description: 'Aggregate of the day: `hoje_usd`, `hoje_count`, `rede`. Only with `METRICS_TOKEN`: money does not leave without a token; the full series is `payments`.'
+        payments:
+          type: object
+          description: Finance summary; only with METRICS_TOKEN.
+        achados:
+          type: object
+          description: 'Which findings appear across stored audits: `audits` (total) and `por_codigo[]` with `code`, `n`, `audits` and `fracao_audits`. Aggregate, no URL and no owner; 1 h cache. `null` if the database did not answer.'
+          nullable: true
+      required:
+      - app
+      - today
+      - today_visits
+      - days
+      - usage
+      - accounts
+      - achados
+      description: 7-day panel. `payments` only shows with the operator token and only on Base mainnet.
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: 'Guest token (`POST /api/guest`) in `X-Guest-Token: pa_…`, `Authorization: Bearer pa_…` or `?guest_token=pa_…`. A user session (`sess_…`) also works and takes precedence.'

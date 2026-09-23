@@ -1,0 +1,37 @@
+openapi: 3.2.0
+info:
+  title: PageAudit R API
+  version: f5ac3ca0
+  description: 'Technical SEO auditor that ships the fix. Main client: AI agents. Browsable index at GET /api/.'
+servers:
+- url: https://pageaudit.online
+tags:
+- name: R
+paths:
+  /r/{slug}:
+    get:
+      operationId: get_r_by_slug
+      summary: HTML page of the shared report, with `noindex`
+      description: '`noindex` on purpose: a third party''s report is not our content to index. The JSON twin is `/api/shared/:slug`.
+
+        Returns: `text/html` — the rendered report, with `noindex`.'
+      security: []
+      parameters:
+      - name: slug
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: '`text/html` — the rendered report, with `noindex`.'
+        '404':
+          description: Unknown or revoked slug.
+      tags:
+      - R
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: 'Guest token (`POST /api/guest`) in `X-Guest-Token: pa_…`, `Authorization: Bearer pa_…` or `?guest_token=pa_…`. A user session (`sess_…`) also works and takes precedence.'

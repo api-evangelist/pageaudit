@@ -1,0 +1,27 @@
+openapi: 3.2.0
+info:
+  title: PageAudit Apis.json API
+  version: f5ac3ca0
+  description: 'Technical SEO auditor that ships the fix. Main client: AI agents. Browsable index at GET /api/.'
+servers:
+- url: https://pageaudit.online
+tags:
+- name: Apis.json
+paths:
+  /apis.json:
+    get:
+      operationId: get_apis_json
+      summary: 'APIs.json (apisjson.org, 0.19): the index APIs.io harvests — the API, the MCP…'
+      description: 'Returns: `application/json` in the APIs.json 0.19 format: `apis[]` with `baseURL`, `humanURL` and `properties[]`.'
+      security: []
+      responses:
+        '200':
+          description: '`application/json` in the APIs.json 0.19 format: `apis[]` with `baseURL`, `humanURL` and `properties[]`.'
+      tags:
+      - Apis.json
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: 'Guest token (`POST /api/guest`) in `X-Guest-Token: pa_…`, `Authorization: Bearer pa_…` or `?guest_token=pa_…`. A user session (`sess_…`) also works and takes precedence.'

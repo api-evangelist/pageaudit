@@ -1,0 +1,152 @@
+openapi: 3.2.0
+info:
+  title: PageAudit Tools API
+  version: f5ac3ca0
+  description: 'Technical SEO auditor that ships the fix. Main client: AI agents. Browsable index at GET /api/.'
+servers:
+- url: https://pageaudit.online
+tags:
+- name: Tools
+paths:
+  /api/tools:
+    get:
+      operationId: list_tools
+      summary: 'The micro-tools: one landing per check, all driven by the same engine as the…'
+      description: 'Returns: { tools[{slug,title,h1,description,lead,category,icon,checks,serp,sections,_links}], _links }'
+      security: []
+      responses:
+        '200':
+          description: '{ tools[{slug,title,h1,description,lead,category,icon,checks,serp,sections,_links}], _links }'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tools:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Ferramenta'
+                    description: Every published tool.
+                  _links:
+                    type: object
+                    description: The hub in HTML and the API index.
+                required:
+                - tools
+                - _links
+      tags:
+      - Tools
+  /api/tools/{slug}:
+    get:
+      operationId: get_tool
+      summary: Metadata and copy of one micro-tool
+      description: 'Returns: { slug, title, h1, description, lead, category, icon, checks, serp, sections, _links }'
+      security: []
+      parameters:
+      - name: slug
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: '{ slug, title, h1, description, lead, category, icon, checks, serp, sections, _links }'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ferramenta'
+        '404':
+          description: Unknown slug.
+      tags:
+      - Tools
+  /tools:
+    get:
+      operationId: get_tools
+      summary: HTML hub of the micro-tools, indexable. For JSON use `GET /api/tools`
+      description: 'Returns: `text/html` — the hub page, rendered on the server.'
+      security: []
+      responses:
+        '200':
+          description: '`text/html` — the hub page, rendered on the server.'
+      tags:
+      - Tools
+  /tools/{slug}:
+    get:
+      operationId: get_tools_by_slug
+      summary: HTML landing of one check, indexable. An unknown slug returns a real 404
+      description: 'The 404 is real, not a 200 with an empty shell: mass soft-404s burn the whole domain in the index.
+
+        Returns: `text/html` — the tool''s landing.'
+      security: []
+      parameters:
+      - name: slug
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: '`text/html` — the tool''s landing.'
+        '404':
+          description: Unknown slug — a real 404, not an empty shell.
+      tags:
+      - Tools
+components:
+  schemas:
+    Ferramenta:
+      type: object
+      properties:
+        slug:
+          type: string
+          description: Identifier in the URL, e.g. `title-tag-checker`.
+        title:
+          type: string
+          description: Page title, used in `<title>`.
+        h1:
+          type: string
+          description: The landing's H1.
+        description:
+          type: string
+          description: Meta description of the landing.
+        lead:
+          type: string
+          description: Opening paragraph.
+        category:
+          type: string
+          description: Grouping of the tool in the hub.
+        icon:
+          type: string
+          description: Name of the icon used in the card.
+        checks:
+          type: array
+          items:
+            type: string
+          description: Finding codes this tool highlights — they are the `Achado.code`s.
+        serp:
+          type: object
+          description: How the result looks in the search preview.
+        sections:
+          type: array
+          items:
+            type: object
+          description: Content blocks of the landing.
+        _links:
+          type: object
+          description: This tool in JSON and in HTML.
+      required:
+      - slug
+      - title
+      - h1
+      - description
+      - lead
+      - category
+      - icon
+      - checks
+      - serp
+      - sections
+      - _links
+      description: 'A micro-tool: the landing of one isolated check, with the same engine as the full audit.'
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: 'Guest token (`POST /api/guest`) in `X-Guest-Token: pa_…`, `Authorization: Bearer pa_…` or `?guest_token=pa_…`. A user session (`sess_…`) also works and takes precedence.'

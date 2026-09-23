@@ -1,0 +1,73 @@
+openapi: 3.2.0
+info:
+  title: PageAudit Gate API
+  version: f5ac3ca0
+  description: 'Technical SEO auditor that ships the fix. Main client: AI agents. Browsable index at GET /api/.'
+servers:
+- url: https://pageaudit.online
+tags:
+- name: Gate
+paths:
+  /api/gate:
+    get:
+      operationId: get_api_gate
+      summary: How many free audits remain for this IP and whether Turnstile is about to be…
+      description: 'Check before spending a call: it is the number IN FORCE, not the allowance in the documentation.
+
+        Returns: { ip, now, configured, free_allowance, free_remaining, verified_until, needs_verification, sitekey }'
+      security: []
+      responses:
+        '200':
+          description: '{ ip, now, configured, free_allowance, free_remaining, verified_until, needs_verification, sitekey }'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Gate'
+      tags:
+      - Gate
+components:
+  schemas:
+    Gate:
+      type: object
+      properties:
+        ip:
+          type: string
+          description: IP seen by the edge, already masked.
+        now:
+          type: integer
+          description: Time of the query, in epoch.
+        configured:
+          type: boolean
+          description: Whether Turnstile is configured in this environment.
+        free_allowance:
+          type: integer
+          description: Free audits per day.
+        free_remaining:
+          type: integer
+          description: How many remain today for this IP.
+        verified_until:
+          type: integer
+          description: Until when the verification already done is valid.
+          nullable: true
+        needs_verification:
+          type: boolean
+          description: '`true` when the next call will ask for Turnstile (human) or 402 (agent).'
+        sitekey:
+          type: string
+          description: Turnstile sitekey, for the browser to build the challenge.
+          nullable: true
+      required:
+      - ip
+      - now
+      - configured
+      - free_allowance
+      - free_remaining
+      - verified_until
+      - needs_verification
+      - sitekey
+      description: How much of the daily allowance still exists for this IP, and whether Turnstile is already required.
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: 'Guest token (`POST /api/guest`) in `X-Guest-Token: pa_…`, `Authorization: Bearer pa_…` or `?guest_token=pa_…`. A user session (`sess_…`) also works and takes precedence.'

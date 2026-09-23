@@ -1,0 +1,652 @@
+openapi: 3.2.0
+info:
+  title: PageAudit Tabs API
+  version: f5ac3ca0
+  description: 'Technical SEO auditor that ships the fix. Main client: AI agents. Browsable index at GET /api/.'
+servers:
+- url: https://pageaudit.online
+tags:
+- name: Tabs
+paths:
+  /api/tabs:
+    get:
+      operationId: list_tabs
+      summary: The owner's whole workspace, with the active tab's result already rehydrated
+      description: 'One call draws the whole screen: tabs, the focused tab, its last report, remaining allowance and prices.
+
+        Returns: { tabs[{id,url,alias,active,audit_id,score,created_at}], active_id, active_result{audit_id,url,score,summary,counts,issues,fixes,jsonLd,headers,truncated,share_slug,created_at}, limit, owner, gate{ip,now,configured,free_allowance,free_remaining,verified_until,needs_verification,sitekey}, billing }'
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: '{ tabs[{id,url,alias,active,audit_id,score,created_at}], active_id, active_result{audit_id,url,score,summary,counts,issues,fixes,jsonLd,headers,truncated,share_slug,created_at}, limit, owner, gate{ip,now,configured,free_allowance,free_remaining,verified_until,needs_verification,sitekey}, billing }'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Workspace'
+        '401':
+          description: No credential, or an invalid one. See this endpoint's auth.
+      tags:
+      - Tabs
+    post:
+      operationId: create_tab
+      summary: Opens a tab for the URL, or focuses the one that already exists for it
+      description: 'Past the free tab allowance it answers 402 with `accepts[]`: pay and repeat.
+
+        Returns: { ok, tab{id,url,alias,active,audit_id,score,created_at} }'
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                url:
+                  type: string
+                  description: The URL the tab will follow.
+                alias:
+                  type: string
+                  description: Label to recognise the tab in the list.
+              required:
+              - url
+            example:
+              url: https://example.com/
+              alias: optional label
+      responses:
+        '200':
+          description: '{ ok, tab{id,url,alias,active,audit_id,score,created_at} }'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    description: Always `true`.
+                  tab:
+                    allOf:
+                    - $ref: '#/components/schemas/Aba'
+                    description: The opened tab (or the one that already existed for that URL).
+                required:
+                - ok
+                - tab
+        '400':
+          description: '`url` missing or not http.'
+        '401':
+          description: No credential, or an invalid one. See this endpoint's auth.
+        '402':
+          description: 'Quota exceeded. The response carries `accepts[]` (x402, USDC on Base): pay and repeat the same call with `X-PAYMENT`.'
+      tags:
+      - Tabs
+  /api/tabs/{id}:
+    get:
+      operationId: get_api_tabs_by_id
+      summary: One tab with the full report of its last run
+      description: 'Returns: { tab{id,url,alias,active,audit_id,score,created_at}, result{audit_id,url,score,summary,counts,issues,fixes,jsonLd,headers,truncated,share_slug,created_at} }'
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: '{ tab{id,url,alias,active,audit_id,score,created_at}, result{audit_id,url,score,summary,counts,issues,fixes,jsonLd,headers,truncated,share_slug,created_at} }'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tab:
+                    allOf:
+                    - $ref: '#/components/schemas/Aba'
+                    description: The requested tab.
+                  result:
+                    allOf:
+                    - $ref: '#/components/schemas/AuditGravado'
+                    description: The report of the last run; `null` if the tab never ran.
+                    nullable: true
+                required:
+                - tab
+                - result
+        '401':
+          description: No credential, or an invalid one. See this endpoint's auth.
+        '404':
+          description: The resource does not exist (or is not yours — the API does not tell the two apart on purpose).
+      tags:
+      - Tabs
+    patch:
+      operationId: patch_api_tabs_by_id
+      summary: Renames the tab or puts it in focus
+      description: 'Returns: { ok, tab{id,url,alias,active,audit_id,score,created_at} }'
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                alias:
+                  type: string
+                  description: New label of the tab.
+                active:
+                  type: boolean
+                  description: '`true` focuses this tab (and unfocuses the other).'
+            example:
+              alias: new label
+              active: true
+      responses:
+        '200':
+          description: '{ ok, tab{id,url,alias,active,audit_id,score,created_at} }'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    description: Always `true`.
+                  tab:
+                    allOf:
+                    - $ref: '#/components/schemas/Aba'
+                    description: The tab with the change applied.
+                required:
+                - ok
+                - tab
+        '400':
+          description: No changeable field in the body.
+        '401':
+          description: No credential, or an invalid one. See this endpoint's auth.
+        '404':
+          description: The resource does not exist (or is not yours — the API does not tell the two apart on purpose).
+      tags:
+      - Tabs
+    delete:
+      operationId: delete_api_tabs_by_id
+      summary: Closes the tab. Its audit history keeps existing
+      description: 'Returns: { ok }'
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: '{ ok }'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ok'
+        '401':
+          description: No credential, or an invalid one. See this endpoint's auth.
+        '404':
+          description: The resource does not exist (or is not yours — the API does not tell the two apart on purpose).
+      tags:
+      - Tabs
+  /api/tabs/{id}/run:
+    post:
+      operationId: run_tab
+      summary: Re-audits the tab's URL and stores a new report
+      description: 'Consumes the same daily allowance as `POST /api/audit` — past it, 402 with `accepts[]`.
+
+        Returns: { ok, tab{id,url,alias,active,audit_id,score,created_at}, gate{ip,now,configured,free_allowance,free_remaining,verified_until,needs_verification,sitekey}, result{audit_id,url,score,summary,counts,issues,fixes,jsonLd,headers,truncated,share_slug,created_at} }'
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: '{ ok, tab{id,url,alias,active,audit_id,score,created_at}, gate{ip,now,configured,free_allowance,free_remaining,verified_until,needs_verification,sitekey}, result{audit_id,url,score,summary,counts,issues,fixes,jsonLd,headers,truncated,share_slug,created_at} }'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    description: Always `true`.
+                  tab:
+                    allOf:
+                    - $ref: '#/components/schemas/Aba'
+                    description: The tab with the new run's score.
+                  gate:
+                    allOf:
+                    - $ref: '#/components/schemas/Gate'
+                    description: How much of the allowance is left after this run.
+                  result:
+                    allOf:
+                    - $ref: '#/components/schemas/AuditGravado'
+                    description: The report just stored.
+                required:
+                - ok
+                - tab
+                - gate
+                - result
+        '401':
+          description: No credential, or an invalid one. See this endpoint's auth.
+        '402':
+          description: 'Quota exceeded. The response carries `accepts[]` (x402, USDC on Base): pay and repeat the same call with `X-PAYMENT`.'
+        '404':
+          description: The resource does not exist (or is not yours — the API does not tell the two apart on purpose).
+      tags:
+      - Tabs
+components:
+  schemas:
+    Gate:
+      type: object
+      properties:
+        ip:
+          type: string
+          description: IP seen by the edge, already masked.
+        now:
+          type: integer
+          description: Time of the query, in epoch.
+        configured:
+          type: boolean
+          description: Whether Turnstile is configured in this environment.
+        free_allowance:
+          type: integer
+          description: Free audits per day.
+        free_remaining:
+          type: integer
+          description: How many remain today for this IP.
+        verified_until:
+          type: integer
+          description: Until when the verification already done is valid.
+          nullable: true
+        needs_verification:
+          type: boolean
+          description: '`true` when the next call will ask for Turnstile (human) or 402 (agent).'
+        sitekey:
+          type: string
+          description: Turnstile sitekey, for the browser to build the challenge.
+          nullable: true
+      required:
+      - ip
+      - now
+      - configured
+      - free_allowance
+      - free_remaining
+      - verified_until
+      - needs_verification
+      - sitekey
+      description: How much of the daily allowance still exists for this IP, and whether Turnstile is already required.
+    Aba:
+      type: object
+      properties:
+        id:
+          type: string
+          description: ID of the tab.
+        url:
+          type: string
+          description: URL the tab follows.
+        alias:
+          type: string
+          description: Label the person gave the tab.
+          nullable: true
+        active:
+          type: boolean
+          description: Whether it is the focused tab in the workspace.
+        audit_id:
+          type: string
+          description: Audit of this tab's last run.
+          nullable: true
+        score:
+          type: integer
+          description: Score of the last run.
+          nullable: true
+        created_at:
+          type: string
+          description: When the tab was opened (UTC).
+      required:
+      - id
+      - url
+      - alias
+      - active
+      - audit_id
+      - score
+      - created_at
+      description: 'A workspace tab: one followed URL, with the last result kept.'
+    Ok:
+      type: object
+      properties:
+        ok:
+          type: boolean
+          description: Always `true` — failure comes as a 4xx/5xx status, not as `ok:false`.
+      required:
+      - ok
+      description: Write confirmation with no body of its own to return.
+    Achado:
+      type: object
+      properties:
+        severity:
+          type: string
+          description: Severity of the finding.
+        code:
+          type: string
+          description: Stable check code, e.g. `title_missing`. It is what you filter by.
+        message:
+          type: string
+          description: The finding in one sentence, ready to show a person.
+      required:
+      - severity
+      - code
+      - message
+      description: A problem (or a pass) found on the page.
+    Workspace:
+      type: object
+      properties:
+        tabs:
+          type: array
+          items:
+            $ref: '#/components/schemas/Aba'
+          description: Every tab of the owner.
+        active_id:
+          type: string
+          description: Which tab is in focus.
+          nullable: true
+        active_result:
+          allOf:
+          - $ref: '#/components/schemas/AuditGravado'
+          description: The last result of the active tab, so a second call is not needed.
+          nullable: true
+        limit:
+          type: integer
+          description: How many tabs fit before paying.
+        owner:
+          type: string
+          description: Identifier of this workspace's owner.
+        gate:
+          allOf:
+          - $ref: '#/components/schemas/Gate'
+          description: How much of the IP's free allowance remains.
+        billing:
+          type: object
+          description: Prices and usage, the same `GET /api/billing` returns.
+      required:
+      - tabs
+      - active_id
+      - active_result
+      - limit
+      - owner
+      - gate
+      - billing
+      description: The owner's whole workspace, with the active tab's result already rehydrated — one call to draw the screen.
+    ResumoPagina:
+      type: object
+      properties:
+        finalUrl:
+          type: string
+          description: URL after following every redirect.
+        status:
+          type: integer
+          description: Final HTTP status of the target.
+        contentType:
+          type: string
+          description: Content-Type of the final response.
+          nullable: true
+        title:
+          type: string
+          description: Content of `<title>`.
+          nullable: true
+        metaDescription:
+          type: string
+          description: Content of `<meta name=description>`.
+          nullable: true
+        canonical:
+          type: string
+          description: Canonical URL declared by the page.
+          nullable: true
+        robots:
+          type: string
+          description: Content of `<meta name=robots>`.
+          nullable: true
+        viewport:
+          type: string
+          description: Content of `<meta name=viewport>`.
+          nullable: true
+        charset:
+          type: string
+          description: Declared encoding.
+          nullable: true
+        lang:
+          type: string
+          description: Language declared in `<html lang>`.
+          nullable: true
+        favicon:
+          type: string
+          description: URL of the favicon found.
+          nullable: true
+        faviconSource:
+          type: string
+          description: 'How the favicon was found: declared or by the default path.'
+          nullable: true
+        h1s:
+          type: array
+          items:
+            type: string
+          description: Every `<h1>` on the page, in order.
+        openGraph:
+          type: object
+          description: The `og:*` tags found, key by key.
+        twitter:
+          type: object
+          description: The `twitter:*` tags found.
+        jsonLdCount:
+          type: integer
+          description: How many JSON-LD nodes the page had.
+        jsonLdBlocks:
+          type: integer
+          description: How many `<script type=application/ld+json>` blocks existed.
+        jsonLdDropped:
+          type: boolean
+          description: '`true` when nodes were dropped for passing the cap.'
+        jsonLdTypes:
+          type: array
+          items:
+            type: string
+          description: The `@type`s found, e.g. `Organization`, `WebSite`.
+        images:
+          type: object
+          description: Image count and how many have no `alt`.
+        links:
+          type: object
+          description: Count of internal, external and text-less links.
+        words:
+          type: integer
+          description: Words in the visible content.
+        hreflang:
+          type: array
+          items:
+            type: object
+          description: The declared language alternates.
+        legacy:
+          type: object
+          description: Old markup still present (e.g. `<font>`, layout tables).
+        redirects:
+          type: array
+          items:
+            type: object
+          description: The redirect chain followed to the final URL.
+        robotsTxt:
+          type: object
+          description: What the origin's `robots.txt` says about this URL.
+        sitemap:
+          type: object
+          description: Whether the URL appears in the sitemap the origin declares.
+      required:
+      - finalUrl
+      - status
+      - contentType
+      - title
+      - metaDescription
+      - canonical
+      - robots
+      - viewport
+      - charset
+      - lang
+      - favicon
+      - faviconSource
+      - h1s
+      - openGraph
+      - twitter
+      - jsonLdCount
+      - jsonLdBlocks
+      - jsonLdDropped
+      - jsonLdTypes
+      - images
+      - links
+      - words
+      - hreflang
+      - legacy
+      - redirects
+      - robotsTxt
+      - sitemap
+      description: Everything the page declares about itself. It is the most consulted object of the API.
+    AuditGravado:
+      type: object
+      properties:
+        audit_id:
+          type: string
+          description: ID of the audit.
+        url:
+          type: string
+          description: Final audited URL, after following the redirects.
+        score:
+          type: integer
+          description: Score from 0 to 100.
+        summary:
+          allOf:
+          - $ref: '#/components/schemas/ResumoPagina'
+          description: What the page declared at the time of the run.
+          nullable: true
+        counts:
+          allOf:
+          - $ref: '#/components/schemas/ContagemAchados'
+          description: How many findings of each severity.
+        issues:
+          type: array
+          items:
+            $ref: '#/components/schemas/Achado'
+          description: Everything found in that run.
+        fixes:
+          type: array
+          items:
+            $ref: '#/components/schemas/Correcao'
+          description: The ready fix of each finding; an audit stored before this existed gets the computation on read.
+        jsonLd:
+          type: array
+          items:
+            type: object
+          description: The raw JSON-LD blocks stored.
+        headers:
+          type: object
+          description: Headers of the target's response, as they were in the run.
+        truncated:
+          type: array
+          items:
+            type: string
+          description: What was cut by size when storing.
+        share_slug:
+          type: string
+          description: Public slug, if this audit was shared.
+          nullable: true
+        created_at:
+          type: string
+          description: When the run happened (UTC).
+      required:
+      - audit_id
+      - url
+      - score
+      - summary
+      - counts
+      - issues
+      - fixes
+      - jsonLd
+      - headers
+      - truncated
+      - share_slug
+      - created_at
+      description: The same report re-read from the database. It has no `quota` and no `_links` (it is a read, not a run) and gains the date and the share slug.
+    Correcao:
+      type: object
+      properties:
+        code:
+          type: string
+          description: The same `code` as the finding (`Achado.code`).
+        severity:
+          type: string
+          description: Severity of the source finding.
+        classe:
+          type: string
+          description: '`deterministico` comes whole from the page; `molde` has a `{{…}}` placeholder; `sem_patch` is an instruction.'
+        alvo:
+          type: string
+          description: 'Where to apply: `head`, `corpo`, `img`, `arquivo` or `pagina` (instruction).'
+        snippet:
+          type: string
+          description: The ready tag (or with a placeholder). `null` for files and for `sem_patch`.
+          nullable: true
+        arquivo:
+          type: object
+          description: '`path` and `conteudo` when the fix is a file at the host root.'
+          nullable: true
+        fonte:
+          type: string
+          description: Where the value came from, or what the page already had (for the template or to check the cut).
+          nullable: true
+        nota:
+          type: string
+          description: How to apply, or what to decide.
+          nullable: true
+      required:
+      - code
+      - severity
+      - classe
+      - alvo
+      - snippet
+      - arquivo
+      - fonte
+      - nota
+      description: The ready fix of one finding. `classe` says whether it is to paste, to fill in or to decide.
+    ContagemAchados:
+      type: object
+      properties:
+        errors:
+          type: integer
+          description: Serious findings.
+        warnings:
+          type: integer
+          description: Findings that deserve attention.
+        info:
+          type: integer
+          description: Observations without severity.
+      required:
+      - errors
+      - warnings
+      - info
+      description: How many findings of each severity — the summary that fits in a badge.
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: 'Guest token (`POST /api/guest`) in `X-Guest-Token: pa_…`, `Authorization: Bearer pa_…` or `?guest_token=pa_…`. A user session (`sess_…`) also works and takes precedence.'

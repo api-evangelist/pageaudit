@@ -1,0 +1,39 @@
+openapi: 3.2.0
+info:
+  title: PageAudit Guest API
+  version: f5ac3ca0
+  description: 'Technical SEO auditor that ships the fix. Main client: AI agents. Browsable index at GET /api/.'
+servers:
+- url: https://pageaudit.online
+tags:
+- name: Guest
+paths:
+  /api/guest:
+    post:
+      operationId: create_guest
+      summary: Creates a guest `pa_…` — it is what gives access to the tab workspace without…
+      description: 'Keep the token: it is the identity of the tabs and of the audits tied to them.
+
+        Returns: { token }'
+      security: []
+      responses:
+        '200':
+          description: '{ token }'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    description: The guest, prefix `pa_`. Send it in `X-Guest-Token`, as Bearer or in `?guest_token=`.
+                required:
+                - token
+      tags:
+      - Guest
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: 'Guest token (`POST /api/guest`) in `X-Guest-Token: pa_…`, `Authorization: Bearer pa_…` or `?guest_token=pa_…`. A user session (`sess_…`) also works and takes precedence.'

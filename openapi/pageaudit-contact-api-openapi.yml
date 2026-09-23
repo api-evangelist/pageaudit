@@ -1,0 +1,81 @@
+openapi: 3.2.0
+info:
+  title: PageAudit Contact API
+  version: f5ac3ca0
+  description: 'Technical SEO auditor that ships the fix. Main client: AI agents. Browsable index at GET /api/.'
+servers:
+- url: https://pageaudit.online
+tags:
+- name: Contact
+paths:
+  /api/contact:
+    post:
+      operationId: contact
+      summary: 'Talks to support: a human solves Turnstile, an agent pays $0.10 in x402'
+      description: 'Without a captcha in the body the request is treated as an agent: 402 until paid. The first agent message is free; after that the backoff is 60s doubling up to a 1-hour cap, announced in `Retry-After`.
+
+        Returns: { ok, path }'
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: What to call the person writing.
+                email:
+                  type: string
+                  description: Where to reply.
+                message:
+                  type: string
+                  description: What you want to say.
+                form_ts:
+                  type: integer
+                  description: When the form was opened; it is the anti-robot of the human path.
+                cf_turnstile_response:
+                  type: string
+                  description: Turnstile response; present only on the human path.
+              required:
+              - name
+              - email
+              - message
+            example:
+              name: …
+              email: a@example.com
+              message: …
+              form_ts: 0
+              cf_turnstile_response: (human)
+      responses:
+        '200':
+          description: '{ ok, path }'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                    description: Always `true` when the message was accepted.
+                  path:
+                    type: string
+                    description: 'Which path it came through: human with captcha or paid agent.'
+                required:
+                - ok
+                - path
+        '400':
+          description: Required field missing.
+        '402':
+          description: 'Quota exceeded. The response carries `accepts[]` (x402, USDC on Base): pay and repeat the same call with `X-PAYMENT`.'
+        '429':
+          description: 'Agent backoff: wait for `Retry-After`.'
+      tags:
+      - Contact
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: 'Guest token (`POST /api/guest`) in `X-Guest-Token: pa_…`, `Authorization: Bearer pa_…` or `?guest_token=pa_…`. A user session (`sess_…`) also works and takes precedence.'
