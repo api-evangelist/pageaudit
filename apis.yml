@@ -12,7 +12,7 @@ tags:
   - Technical SEO
   - SEO auditing
   - Developer Tools
-  - agent-native
+  - Agent-Native
   - MCP
   - x402
 tags_raw:
@@ -22,12 +22,12 @@ tags_raw:
   - Agent-native
   - MCP
   - x402
+  - agent-native
 apis:
 - aid: pageaudit:pageaudit-apis-json-api
   name: PageAudit Apis.json API
   description: The Apis.json API from PageAudit — 1 operation(s) for apis.json.
   humanURL: https://pageaudit.online/
-  baseURL: https://pageaudit.online
   tags:
   - APIs.json
   tags_raw:
@@ -45,7 +45,6 @@ apis:
   name: PageAudit Audit API
   description: The Audit API from PageAudit — 1 operation(s) for audit.
   humanURL: https://pageaudit.online/
-  baseURL: https://pageaudit.online
   tags:
   - Audit
   properties:
@@ -61,7 +60,6 @@ apis:
   name: PageAudit Audits API
   description: The Audits API from PageAudit — 3 operation(s) for audits.
   humanURL: https://pageaudit.online/
-  baseURL: https://pageaudit.online
   tags:
   - Audit
   tags_raw:
@@ -79,7 +77,6 @@ apis:
   name: PageAudit Auth API
   description: The Auth API from PageAudit — 4 operation(s) for auth.
   humanURL: https://pageaudit.online/
-  baseURL: https://pageaudit.online
   tags:
   - Authentication
   tags_raw:
@@ -97,7 +94,6 @@ apis:
   name: PageAudit Badge API
   description: The Badge API from PageAudit — 2 operation(s) for badge.
   humanURL: https://pageaudit.online/
-  baseURL: https://pageaudit.online
   tags:
   - Badge
   properties:
@@ -113,7 +109,6 @@ apis:
   name: PageAudit Billing API
   description: The Billing API from PageAudit — 1 operation(s) for billing.
   humanURL: https://pageaudit.online/
-  baseURL: https://pageaudit.online
   tags:
   - Billing
   properties:
@@ -129,7 +124,6 @@ apis:
   name: PageAudit Contact API
   description: The Contact API from PageAudit — 1 operation(s) for contact.
   humanURL: https://pageaudit.online/
-  baseURL: https://pageaudit.online
   tags:
   - Contact
   properties:
@@ -145,7 +139,6 @@ apis:
   name: PageAudit Credito API
   description: The Credito API from PageAudit — 1 operation(s) for credito.
   humanURL: https://pageaudit.online/
-  baseURL: https://pageaudit.online
   tags:
   - Credito
   properties:
@@ -161,7 +154,6 @@ apis:
   name: PageAudit Gate API
   description: The Gate API from PageAudit — 1 operation(s) for gate.
   humanURL: https://pageaudit.online/
-  baseURL: https://pageaudit.online
   tags:
   - Gate
   properties:
@@ -177,7 +169,6 @@ apis:
   name: PageAudit Guest API
   description: The Guest API from PageAudit — 1 operation(s) for guest.
   humanURL: https://pageaudit.online/
-  baseURL: https://pageaudit.online
   tags:
   - Guest
   properties:
@@ -193,7 +184,6 @@ apis:
   name: PageAudit Health API
   description: The Health API from PageAudit — 1 operation(s) for health.
   humanURL: https://pageaudit.online/
-  baseURL: https://pageaudit.online
   tags:
   - Health
   properties:
@@ -209,7 +199,6 @@ apis:
   name: PageAudit MCP API
   description: The Mcp API from PageAudit — 1 operation(s) for mcp.
   humanURL: https://pageaudit.online/
-  baseURL: https://pageaudit.online
   tags:
   - MCP
   tags_raw:
@@ -227,7 +216,6 @@ apis:
   name: PageAudit Me API
   description: The Me API from PageAudit — 1 operation(s) for me.
   humanURL: https://pageaudit.online/
-  baseURL: https://pageaudit.online
   tags:
   - Me
   properties:
@@ -243,7 +231,6 @@ apis:
   name: PageAudit Metrics API
   description: The Metrics API from PageAudit — 1 operation(s) for metrics.
   humanURL: https://pageaudit.online/
-  baseURL: https://pageaudit.online
   tags:
   - Metrics
   properties:
@@ -259,7 +246,6 @@ apis:
   name: PageAudit Okf API
   description: The Okf API from PageAudit — 1 operation(s) for okf.
   humanURL: https://pageaudit.online/
-  baseURL: https://pageaudit.online
   tags:
   - Okf
   properties:
@@ -275,7 +261,6 @@ apis:
   name: PageAudit Page Audit API
   description: The PageAudit API from PageAudit — 1 operation(s) for pageaudit.
   humanURL: https://pageaudit.online/
-  baseURL: https://pageaudit.online
   tags:
   - PageAudit
   properties:
@@ -291,7 +276,6 @@ apis:
   name: PageAudit R API
   description: The R API from PageAudit — 1 operation(s) for r.
   humanURL: https://pageaudit.online/
-  baseURL: https://pageaudit.online
   tags:
   - R
   properties:
@@ -307,7 +291,6 @@ apis:
   name: PageAudit Shared API
   description: The Shared API from PageAudit — 1 operation(s) for shared.
   humanURL: https://pageaudit.online/
-  baseURL: https://pageaudit.online
   tags:
   - Shared
   properties:
@@ -323,7 +306,6 @@ apis:
   name: PageAudit Tabs API
   description: The Tabs API from PageAudit — 3 operation(s) for tabs.
   humanURL: https://pageaudit.online/
-  baseURL: https://pageaudit.online
   tags:
   - Tabs
   properties:
@@ -339,7 +321,6 @@ apis:
   name: PageAudit Tools API
   description: The Tools API from PageAudit — 4 operation(s) for tools.
   humanURL: https://pageaudit.online/
-  baseURL: https://pageaudit.online
   tags:
   - Tools
   properties:
@@ -355,7 +336,6 @@ apis:
   name: PageAudit Visit API
   description: The Visit API from PageAudit — 1 operation(s) for visit.
   humanURL: https://pageaudit.online/
-  baseURL: https://pageaudit.online
   tags:
   - Visit
   properties:
@@ -371,7 +351,6 @@ apis:
   name: PageAudit .well Known API
   description: The .well Known API from PageAudit — 1 operation(s) for .well known.
   humanURL: https://pageaudit.online/
-  baseURL: https://pageaudit.online
   tags:
   - .well Known
   properties:
