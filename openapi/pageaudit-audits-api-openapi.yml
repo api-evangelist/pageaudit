@@ -129,105 +129,23 @@ paths:
       - Audits
 components:
   schemas:
-    ArquivoPatch:
+    Achado:
       type: object
       properties:
+        severity:
+          type: string
+          description: Severity of the finding.
         code:
           type: string
-          description: Finding that originated it (`robots_txt_missing`, `sitemap_missing`).
-        path:
+          description: Stable check code, e.g. `title_missing`. It is what you filter by.
+        message:
           type: string
-          description: Absolute path on the host, e.g. `/robots.txt`.
-        conteudo:
-          type: string
-          description: Full content of the file.
+          description: The finding in one sentence, ready to show a person.
       required:
+      - severity
       - code
-      - path
-      - conteudo
-      description: A file to create at the host root.
-    AuditGravado:
-      type: object
-      properties:
-        audit_id:
-          type: string
-          description: ID of the audit.
-        url:
-          type: string
-          description: Final audited URL, after following the redirects.
-        score:
-          type: integer
-          description: Score from 0 to 100.
-        summary:
-          allOf:
-          - $ref: '#/components/schemas/ResumoPagina'
-          description: What the page declared at the time of the run.
-          nullable: true
-        counts:
-          allOf:
-          - $ref: '#/components/schemas/ContagemAchados'
-          description: How many findings of each severity.
-        issues:
-          type: array
-          items:
-            $ref: '#/components/schemas/Achado'
-          description: Everything found in that run.
-        fixes:
-          type: array
-          items:
-            $ref: '#/components/schemas/Correcao'
-          description: The ready fix of each finding; an audit stored before this existed gets the computation on read.
-        jsonLd:
-          type: array
-          items:
-            type: object
-          description: The raw JSON-LD blocks stored.
-        headers:
-          type: object
-          description: Headers of the target's response, as they were in the run.
-        truncated:
-          type: array
-          items:
-            type: string
-          description: What was cut by size when storing.
-        share_slug:
-          type: string
-          description: Public slug, if this audit was shared.
-          nullable: true
-        created_at:
-          type: string
-          description: When the run happened (UTC).
-      required:
-      - audit_id
-      - url
-      - score
-      - summary
-      - counts
-      - issues
-      - fixes
-      - jsonLd
-      - headers
-      - truncated
-      - share_slug
-      - created_at
-      description: The same report re-read from the database. It has no `quota` and no `_links` (it is a read, not a run) and gains the date and the share slug.
-    ContagemAchados:
-      type: object
-      properties:
-        errors:
-          type: integer
-          description: Serious findings.
-        warnings:
-          type: integer
-          description: Findings that deserve attention.
-        info:
-          type: integer
-          description: Observations without severity.
-      required:
-      - errors
-      - warnings
-      - info
-      description: How many findings of each severity — the summary that fits in a badge.
+      - message
+      description: A problem (or a pass) found on the page.
     SemPatch:
       type: object
       properties:
@@ -241,6 +159,56 @@ components:
       - code
       - nota
       description: 'Finding without an automatic fix: it is a decision or infrastructure.'
+    Patch:
+      type: object
+      properties:
+        url:
+          type: string
+          description: Final audited URL.
+          nullable: true
+        audit:
+          type: string
+          description: Absolute link of the source audit.
+          nullable: true
+        head:
+          type: string
+          description: The deterministic tags, one per line, in <head> order (charset first). Empty when there are none.
+        arquivos:
+          type: array
+          items:
+            $ref: '#/components/schemas/ArquivoPatch'
+          description: Files to create at the host root.
+        moldes:
+          type: array
+          items:
+            $ref: '#/components/schemas/MoldePatch'
+          description: What only the owner can fill in.
+        sem_patch:
+          type: array
+          items:
+            $ref: '#/components/schemas/SemPatch'
+          description: What is a decision or infrastructure.
+        resumo:
+          allOf:
+          - $ref: '#/components/schemas/ResumoPatch'
+          description: Count per class.
+        como_aplicar:
+          type: string
+          description: One-sentence instruction.
+        _links:
+          type: object
+          description: '`api_index`.'
+      required:
+      - url
+      - audit
+      - head
+      - arquivos
+      - moldes
+      - sem_patch
+      - resumo
+      - como_aplicar
+      - _links
+      description: The consolidated patch of an audit, ready for the agent that builds the site to apply.
     Compartilhamento:
       type: object
       properties:
@@ -270,6 +238,49 @@ components:
       - badge
       - _links
       description: The result of publishing an audit under a non-enumerable slug.
+    MoldePatch:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Source finding.
+        alvo:
+          type: string
+          description: '`head`, `corpo` or `img`.'
+        snippet:
+          type: string
+          description: The tag with `{{PLACEHOLDER}}`.
+        fonte:
+          type: string
+          description: Suggestion taken from the page itself (H1, og:description…), if any.
+          nullable: true
+        nota:
+          type: string
+          description: What to fill in and the limit.
+      required:
+      - code
+      - alvo
+      - snippet
+      - fonte
+      - nota
+      description: 'A tag with a marked placeholder: content missing that only the owner knows.'
+    ArquivoPatch:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Finding that originated it (`robots_txt_missing`, `sitemap_missing`).
+        path:
+          type: string
+          description: Absolute path on the host, e.g. `/robots.txt`.
+        conteudo:
+          type: string
+          description: Full content of the file.
+      required:
+      - code
+      - path
+      - conteudo
+      description: A file to create at the host root.
     ResumoPagina:
       type: object
       properties:
@@ -401,99 +412,6 @@ components:
       - robotsTxt
       - sitemap
       description: Everything the page declares about itself. It is the most consulted object of the API.
-    Patch:
-      type: object
-      properties:
-        url:
-          type: string
-          description: Final audited URL.
-          nullable: true
-        audit:
-          type: string
-          description: Absolute link of the source audit.
-          nullable: true
-        head:
-          type: string
-          description: The deterministic tags, one per line, in <head> order (charset first). Empty when there are none.
-        arquivos:
-          type: array
-          items:
-            $ref: '#/components/schemas/ArquivoPatch'
-          description: Files to create at the host root.
-        moldes:
-          type: array
-          items:
-            $ref: '#/components/schemas/MoldePatch'
-          description: What only the owner can fill in.
-        sem_patch:
-          type: array
-          items:
-            $ref: '#/components/schemas/SemPatch'
-          description: What is a decision or infrastructure.
-        resumo:
-          allOf:
-          - $ref: '#/components/schemas/ResumoPatch'
-          description: Count per class.
-        como_aplicar:
-          type: string
-          description: One-sentence instruction.
-        _links:
-          type: object
-          description: '`api_index`.'
-      required:
-      - url
-      - audit
-      - head
-      - arquivos
-      - moldes
-      - sem_patch
-      - resumo
-      - como_aplicar
-      - _links
-      description: The consolidated patch of an audit, ready for the agent that builds the site to apply.
-    Achado:
-      type: object
-      properties:
-        severity:
-          type: string
-          description: Severity of the finding.
-        code:
-          type: string
-          description: Stable check code, e.g. `title_missing`. It is what you filter by.
-        message:
-          type: string
-          description: The finding in one sentence, ready to show a person.
-      required:
-      - severity
-      - code
-      - message
-      description: A problem (or a pass) found on the page.
-    MoldePatch:
-      type: object
-      properties:
-        code:
-          type: string
-          description: Source finding.
-        alvo:
-          type: string
-          description: '`head`, `corpo` or `img`.'
-        snippet:
-          type: string
-          description: The tag with `{{PLACEHOLDER}}`.
-        fonte:
-          type: string
-          description: Suggestion taken from the page itself (H1, og:description…), if any.
-          nullable: true
-        nota:
-          type: string
-          description: What to fill in and the limit.
-      required:
-      - code
-      - alvo
-      - snippet
-      - fonte
-      - nota
-      description: 'A tag with a marked placeholder: content missing that only the owner knows.'
     ResumoPatch:
       type: object
       properties:
@@ -515,6 +433,88 @@ components:
       - sem_patch
       - total
       description: How many fixes of each class.
+    AuditGravado:
+      type: object
+      properties:
+        audit_id:
+          type: string
+          description: ID of the audit.
+        url:
+          type: string
+          description: Final audited URL, after following the redirects.
+        score:
+          type: integer
+          description: Score from 0 to 100.
+        summary:
+          allOf:
+          - $ref: '#/components/schemas/ResumoPagina'
+          description: What the page declared at the time of the run.
+          nullable: true
+        counts:
+          allOf:
+          - $ref: '#/components/schemas/ContagemAchados'
+          description: How many findings of each severity.
+        issues:
+          type: array
+          items:
+            $ref: '#/components/schemas/Achado'
+          description: Everything found in that run.
+        fixes:
+          type: array
+          items:
+            $ref: '#/components/schemas/Correcao'
+          description: The ready fix of each finding; an audit stored before this existed gets the computation on read.
+        jsonLd:
+          type: array
+          items:
+            type: object
+          description: The raw JSON-LD blocks stored.
+        headers:
+          type: object
+          description: Headers of the target's response, as they were in the run.
+        truncated:
+          type: array
+          items:
+            type: string
+          description: What was cut by size when storing.
+        share_slug:
+          type: string
+          description: Public slug, if this audit was shared.
+          nullable: true
+        created_at:
+          type: string
+          description: When the run happened (UTC).
+      required:
+      - audit_id
+      - url
+      - score
+      - summary
+      - counts
+      - issues
+      - fixes
+      - jsonLd
+      - headers
+      - truncated
+      - share_slug
+      - created_at
+      description: The same report re-read from the database. It has no `quota` and no `_links` (it is a read, not a run) and gains the date and the share slug.
+    ContagemAchados:
+      type: object
+      properties:
+        errors:
+          type: integer
+          description: Serious findings.
+        warnings:
+          type: integer
+          description: Findings that deserve attention.
+        info:
+          type: integer
+          description: Observations without severity.
+      required:
+      - errors
+      - warnings
+      - info
+      description: How many findings of each severity — the summary that fits in a badge.
     Correcao:
       type: object
       properties:

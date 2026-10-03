@@ -251,88 +251,107 @@ paths:
       - Tabs
 components:
   schemas:
-    AuditGravado:
+    Workspace:
       type: object
       properties:
-        audit_id:
+        tabs:
+          type: array
+          items:
+            $ref: '#/components/schemas/Aba'
+          description: Every tab of the owner.
+        active_id:
           type: string
-          description: ID of the audit.
+          description: Which tab is in focus.
+          nullable: true
+        active_result:
+          allOf:
+          - $ref: '#/components/schemas/AuditGravado'
+          description: The last result of the active tab, so a second call is not needed.
+          nullable: true
+        limit:
+          type: integer
+          description: How many tabs fit before paying.
+        owner:
+          type: string
+          description: Identifier of this workspace's owner.
+        gate:
+          allOf:
+          - $ref: '#/components/schemas/Gate'
+          description: How much of the IP's free allowance remains.
+        billing:
+          type: object
+          description: Prices and usage, the same `GET /api/billing` returns.
+      required:
+      - tabs
+      - active_id
+      - active_result
+      - limit
+      - owner
+      - gate
+      - billing
+      description: The owner's whole workspace, with the active tab's result already rehydrated — one call to draw the screen.
+    Achado:
+      type: object
+      properties:
+        severity:
+          type: string
+          description: Severity of the finding.
+        code:
+          type: string
+          description: Stable check code, e.g. `title_missing`. It is what you filter by.
+        message:
+          type: string
+          description: The finding in one sentence, ready to show a person.
+      required:
+      - severity
+      - code
+      - message
+      description: A problem (or a pass) found on the page.
+    Ok:
+      type: object
+      properties:
+        ok:
+          type: boolean
+          description: Always `true` — failure comes as a 4xx/5xx status, not as `ok:false`.
+      required:
+      - ok
+      description: Write confirmation with no body of its own to return.
+    Aba:
+      type: object
+      properties:
+        id:
+          type: string
+          description: ID of the tab.
         url:
           type: string
-          description: Final audited URL, after following the redirects.
+          description: URL the tab follows.
+        alias:
+          type: string
+          description: Label the person gave the tab.
+          nullable: true
+        active:
+          type: boolean
+          description: Whether it is the focused tab in the workspace.
+        audit_id:
+          type: string
+          description: Audit of this tab's last run.
+          nullable: true
         score:
           type: integer
-          description: Score from 0 to 100.
-        summary:
-          allOf:
-          - $ref: '#/components/schemas/ResumoPagina'
-          description: What the page declared at the time of the run.
-          nullable: true
-        counts:
-          allOf:
-          - $ref: '#/components/schemas/ContagemAchados'
-          description: How many findings of each severity.
-        issues:
-          type: array
-          items:
-            $ref: '#/components/schemas/Achado'
-          description: Everything found in that run.
-        fixes:
-          type: array
-          items:
-            $ref: '#/components/schemas/Correcao'
-          description: The ready fix of each finding; an audit stored before this existed gets the computation on read.
-        jsonLd:
-          type: array
-          items:
-            type: object
-          description: The raw JSON-LD blocks stored.
-        headers:
-          type: object
-          description: Headers of the target's response, as they were in the run.
-        truncated:
-          type: array
-          items:
-            type: string
-          description: What was cut by size when storing.
-        share_slug:
-          type: string
-          description: Public slug, if this audit was shared.
+          description: Score of the last run.
           nullable: true
         created_at:
           type: string
-          description: When the run happened (UTC).
+          description: When the tab was opened (UTC).
       required:
-      - audit_id
+      - id
       - url
+      - alias
+      - active
+      - audit_id
       - score
-      - summary
-      - counts
-      - issues
-      - fixes
-      - jsonLd
-      - headers
-      - truncated
-      - share_slug
       - created_at
-      description: The same report re-read from the database. It has no `quota` and no `_links` (it is a read, not a run) and gains the date and the share slug.
-    ContagemAchados:
-      type: object
-      properties:
-        errors:
-          type: integer
-          description: Serious findings.
-        warnings:
-          type: integer
-          description: Findings that deserve attention.
-        info:
-          type: integer
-          description: Observations without severity.
-      required:
-      - errors
-      - warnings
-      - info
-      description: How many findings of each severity — the summary that fits in a badge.
+      description: 'A workspace tab: one followed URL, with the last result kept.'
     ResumoPagina:
       type: object
       properties:
@@ -464,59 +483,88 @@ components:
       - robotsTxt
       - sitemap
       description: Everything the page declares about itself. It is the most consulted object of the API.
-    Aba:
+    AuditGravado:
       type: object
       properties:
-        id:
-          type: string
-          description: ID of the tab.
-        url:
-          type: string
-          description: URL the tab follows.
-        alias:
-          type: string
-          description: Label the person gave the tab.
-          nullable: true
-        active:
-          type: boolean
-          description: Whether it is the focused tab in the workspace.
         audit_id:
           type: string
-          description: Audit of this tab's last run.
-          nullable: true
+          description: ID of the audit.
+        url:
+          type: string
+          description: Final audited URL, after following the redirects.
         score:
           type: integer
-          description: Score of the last run.
+          description: Score from 0 to 100.
+        summary:
+          allOf:
+          - $ref: '#/components/schemas/ResumoPagina'
+          description: What the page declared at the time of the run.
+          nullable: true
+        counts:
+          allOf:
+          - $ref: '#/components/schemas/ContagemAchados'
+          description: How many findings of each severity.
+        issues:
+          type: array
+          items:
+            $ref: '#/components/schemas/Achado'
+          description: Everything found in that run.
+        fixes:
+          type: array
+          items:
+            $ref: '#/components/schemas/Correcao'
+          description: The ready fix of each finding; an audit stored before this existed gets the computation on read.
+        jsonLd:
+          type: array
+          items:
+            type: object
+          description: The raw JSON-LD blocks stored.
+        headers:
+          type: object
+          description: Headers of the target's response, as they were in the run.
+        truncated:
+          type: array
+          items:
+            type: string
+          description: What was cut by size when storing.
+        share_slug:
+          type: string
+          description: Public slug, if this audit was shared.
           nullable: true
         created_at:
           type: string
-          description: When the tab was opened (UTC).
+          description: When the run happened (UTC).
       required:
-      - id
-      - url
-      - alias
-      - active
       - audit_id
+      - url
       - score
+      - summary
+      - counts
+      - issues
+      - fixes
+      - jsonLd
+      - headers
+      - truncated
+      - share_slug
       - created_at
-      description: 'A workspace tab: one followed URL, with the last result kept.'
-    Achado:
+      description: The same report re-read from the database. It has no `quota` and no `_links` (it is a read, not a run) and gains the date and the share slug.
+    ContagemAchados:
       type: object
       properties:
-        severity:
-          type: string
-          description: Severity of the finding.
-        code:
-          type: string
-          description: Stable check code, e.g. `title_missing`. It is what you filter by.
-        message:
-          type: string
-          description: The finding in one sentence, ready to show a person.
+        errors:
+          type: integer
+          description: Serious findings.
+        warnings:
+          type: integer
+          description: Findings that deserve attention.
+        info:
+          type: integer
+          description: Observations without severity.
       required:
-      - severity
-      - code
-      - message
-      description: A problem (or a pass) found on the page.
+      - errors
+      - warnings
+      - info
+      description: How many findings of each severity — the summary that fits in a badge.
     Gate:
       type: object
       properties:
@@ -556,54 +604,6 @@ components:
       - needs_verification
       - sitekey
       description: How much of the daily allowance still exists for this IP, and whether Turnstile is already required.
-    Ok:
-      type: object
-      properties:
-        ok:
-          type: boolean
-          description: Always `true` — failure comes as a 4xx/5xx status, not as `ok:false`.
-      required:
-      - ok
-      description: Write confirmation with no body of its own to return.
-    Workspace:
-      type: object
-      properties:
-        tabs:
-          type: array
-          items:
-            $ref: '#/components/schemas/Aba'
-          description: Every tab of the owner.
-        active_id:
-          type: string
-          description: Which tab is in focus.
-          nullable: true
-        active_result:
-          allOf:
-          - $ref: '#/components/schemas/AuditGravado'
-          description: The last result of the active tab, so a second call is not needed.
-          nullable: true
-        limit:
-          type: integer
-          description: How many tabs fit before paying.
-        owner:
-          type: string
-          description: Identifier of this workspace's owner.
-        gate:
-          allOf:
-          - $ref: '#/components/schemas/Gate'
-          description: How much of the IP's free allowance remains.
-        billing:
-          type: object
-          description: Prices and usage, the same `GET /api/billing` returns.
-      required:
-      - tabs
-      - active_id
-      - active_result
-      - limit
-      - owner
-      - gate
-      - billing
-      description: The owner's whole workspace, with the active tab's result already rehydrated — one call to draw the screen.
     Correcao:
       type: object
       properties:

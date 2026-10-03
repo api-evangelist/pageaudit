@@ -25,32 +25,30 @@ paths:
       - Billing
 components:
   schemas:
-    Uso:
+    Trial:
       type: object
       properties:
-        tabs:
+        days:
           type: integer
-          description: Tabs open now.
-        free_slots_left:
+          description: Trial length in days.
+        active:
+          type: boolean
+          description: Whether it is in force now.
+        days_left:
           type: integer
-          description: Free tabs still available.
+          description: How many days remain.
+        ends_at:
+          type: string
+          description: When it ends (UTC).
+          nullable: true
+        granted:
+          type: boolean
+          description: '`true` when THIS call granted the trial.'
       required:
-      - tabs
-      - free_slots_left
-      description: How much of the free allowance the owner has used.
-    Precos:
-      type: object
-      properties:
-        extra_tab_usd:
-          type: number
-          description: Cost of a tab beyond the allowance.
-        contact_agent_usd:
-          type: number
-          description: Cost of an agent contact.
-      required:
-      - extra_tab_usd
-      - contact_agent_usd
-      description: Prices in force, in dollars. Read them here, not from the documentation.
+      - days
+      - active
+      - ends_at
+      description: The paywall-free period that confirming the e-mail grants. It is the alternative to paying.
     Billing:
       type: object
       properties:
@@ -134,30 +132,32 @@ components:
       - usage
       - trial
       description: 'Everything that decides whether the next call will cost: the x402 configuration, the prices, the usage and the trial.'
-    Trial:
+    Uso:
       type: object
       properties:
-        days:
+        tabs:
           type: integer
-          description: Trial length in days.
-        active:
-          type: boolean
-          description: Whether it is in force now.
-        days_left:
+          description: Tabs open now.
+        free_slots_left:
           type: integer
-          description: How many days remain.
-        ends_at:
-          type: string
-          description: When it ends (UTC).
-          nullable: true
-        granted:
-          type: boolean
-          description: '`true` when THIS call granted the trial.'
+          description: Free tabs still available.
       required:
-      - days
-      - active
-      - ends_at
-      description: The paywall-free period that confirming the e-mail grants. It is the alternative to paying.
+      - tabs
+      - free_slots_left
+      description: How much of the free allowance the owner has used.
+    Precos:
+      type: object
+      properties:
+        extra_tab_usd:
+          type: number
+          description: Cost of a tab beyond the allowance.
+        contact_agent_usd:
+          type: number
+          description: Cost of an agent contact.
+      required:
+      - extra_tab_usd
+      - contact_agent_usd
+      description: Prices in force, in dollars. Read them here, not from the documentation.
   securitySchemes:
     bearerAuth:
       type: http

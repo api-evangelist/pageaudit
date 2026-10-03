@@ -33,88 +33,23 @@ paths:
       - Shared
 components:
   schemas:
-    AuditGravado:
+    Achado:
       type: object
       properties:
-        audit_id:
+        severity:
           type: string
-          description: ID of the audit.
-        url:
+          description: Severity of the finding.
+        code:
           type: string
-          description: Final audited URL, after following the redirects.
-        score:
-          type: integer
-          description: Score from 0 to 100.
-        summary:
-          allOf:
-          - $ref: '#/components/schemas/ResumoPagina'
-          description: What the page declared at the time of the run.
-          nullable: true
-        counts:
-          allOf:
-          - $ref: '#/components/schemas/ContagemAchados'
-          description: How many findings of each severity.
-        issues:
-          type: array
-          items:
-            $ref: '#/components/schemas/Achado'
-          description: Everything found in that run.
-        fixes:
-          type: array
-          items:
-            $ref: '#/components/schemas/Correcao'
-          description: The ready fix of each finding; an audit stored before this existed gets the computation on read.
-        jsonLd:
-          type: array
-          items:
-            type: object
-          description: The raw JSON-LD blocks stored.
-        headers:
-          type: object
-          description: Headers of the target's response, as they were in the run.
-        truncated:
-          type: array
-          items:
-            type: string
-          description: What was cut by size when storing.
-        share_slug:
+          description: Stable check code, e.g. `title_missing`. It is what you filter by.
+        message:
           type: string
-          description: Public slug, if this audit was shared.
-          nullable: true
-        created_at:
-          type: string
-          description: When the run happened (UTC).
+          description: The finding in one sentence, ready to show a person.
       required:
-      - audit_id
-      - url
-      - score
-      - summary
-      - counts
-      - issues
-      - fixes
-      - jsonLd
-      - headers
-      - truncated
-      - share_slug
-      - created_at
-      description: The same report re-read from the database. It has no `quota` and no `_links` (it is a read, not a run) and gains the date and the share slug.
-    ContagemAchados:
-      type: object
-      properties:
-        errors:
-          type: integer
-          description: Serious findings.
-        warnings:
-          type: integer
-          description: Findings that deserve attention.
-        info:
-          type: integer
-          description: Observations without severity.
-      required:
-      - errors
-      - warnings
-      - info
-      description: How many findings of each severity — the summary that fits in a badge.
+      - severity
+      - code
+      - message
+      description: A problem (or a pass) found on the page.
     ResumoPagina:
       type: object
       properties:
@@ -246,23 +181,88 @@ components:
       - robotsTxt
       - sitemap
       description: Everything the page declares about itself. It is the most consulted object of the API.
-    Achado:
+    AuditGravado:
       type: object
       properties:
-        severity:
+        audit_id:
           type: string
-          description: Severity of the finding.
-        code:
+          description: ID of the audit.
+        url:
           type: string
-          description: Stable check code, e.g. `title_missing`. It is what you filter by.
-        message:
+          description: Final audited URL, after following the redirects.
+        score:
+          type: integer
+          description: Score from 0 to 100.
+        summary:
+          allOf:
+          - $ref: '#/components/schemas/ResumoPagina'
+          description: What the page declared at the time of the run.
+          nullable: true
+        counts:
+          allOf:
+          - $ref: '#/components/schemas/ContagemAchados'
+          description: How many findings of each severity.
+        issues:
+          type: array
+          items:
+            $ref: '#/components/schemas/Achado'
+          description: Everything found in that run.
+        fixes:
+          type: array
+          items:
+            $ref: '#/components/schemas/Correcao'
+          description: The ready fix of each finding; an audit stored before this existed gets the computation on read.
+        jsonLd:
+          type: array
+          items:
+            type: object
+          description: The raw JSON-LD blocks stored.
+        headers:
+          type: object
+          description: Headers of the target's response, as they were in the run.
+        truncated:
+          type: array
+          items:
+            type: string
+          description: What was cut by size when storing.
+        share_slug:
           type: string
-          description: The finding in one sentence, ready to show a person.
+          description: Public slug, if this audit was shared.
+          nullable: true
+        created_at:
+          type: string
+          description: When the run happened (UTC).
       required:
-      - severity
-      - code
-      - message
-      description: A problem (or a pass) found on the page.
+      - audit_id
+      - url
+      - score
+      - summary
+      - counts
+      - issues
+      - fixes
+      - jsonLd
+      - headers
+      - truncated
+      - share_slug
+      - created_at
+      description: The same report re-read from the database. It has no `quota` and no `_links` (it is a read, not a run) and gains the date and the share slug.
+    ContagemAchados:
+      type: object
+      properties:
+        errors:
+          type: integer
+          description: Serious findings.
+        warnings:
+          type: integer
+          description: Findings that deserve attention.
+        info:
+          type: integer
+          description: Observations without severity.
+      required:
+      - errors
+      - warnings
+      - info
+      description: How many findings of each severity — the summary that fits in a badge.
     Correcao:
       type: object
       properties:
