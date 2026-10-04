@@ -165,6 +165,28 @@ paths:
       - Auth
 components:
   schemas:
+    Ok:
+      type: object
+      properties:
+        ok:
+          type: boolean
+          description: Always `true` — failure comes as a 4xx/5xx status, not as `ok:false`.
+      required:
+      - ok
+      description: Write confirmation with no body of its own to return.
+    Conta:
+      type: object
+      properties:
+        id:
+          type: string
+          description: ID of the account.
+        email:
+          type: string
+          description: E-mail confirmed by code.
+      required:
+      - id
+      - email
+      description: The person behind the session.
     Trial:
       type: object
       properties:
@@ -189,28 +211,6 @@ components:
       - active
       - ends_at
       description: The paywall-free period that confirming the e-mail grants. It is the alternative to paying.
-    Conta:
-      type: object
-      properties:
-        id:
-          type: string
-          description: ID of the account.
-        email:
-          type: string
-          description: E-mail confirmed by code.
-      required:
-      - id
-      - email
-      description: The person behind the session.
-    Ok:
-      type: object
-      properties:
-        ok:
-          type: boolean
-          description: Always `true` — failure comes as a 4xx/5xx status, not as `ok:false`.
-      required:
-      - ok
-      description: Write confirmation with no body of its own to return.
   securitySchemes:
     bearerAuth:
       type: http

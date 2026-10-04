@@ -56,23 +56,47 @@ paths:
       - Audit
 components:
   schemas:
-    Achado:
+    Correcao:
       type: object
       properties:
-        severity:
-          type: string
-          description: Severity of the finding.
         code:
           type: string
-          description: Stable check code, e.g. `title_missing`. It is what you filter by.
-        message:
+          description: The same `code` as the finding (`Achado.code`).
+        severity:
           type: string
-          description: The finding in one sentence, ready to show a person.
+          description: Severity of the source finding.
+        classe:
+          type: string
+          description: '`deterministico` comes whole from the page; `molde` has a `{{…}}` placeholder; `sem_patch` is an instruction.'
+        alvo:
+          type: string
+          description: 'Where to apply: `head`, `corpo`, `img`, `arquivo` or `pagina` (instruction).'
+        snippet:
+          type: string
+          description: The ready tag (or with a placeholder). `null` for files and for `sem_patch`.
+          nullable: true
+        arquivo:
+          type: object
+          description: '`path` and `conteudo` when the fix is a file at the host root.'
+          nullable: true
+        fonte:
+          type: string
+          description: Where the value came from, or what the page already had (for the template or to check the cut).
+          nullable: true
+        nota:
+          type: string
+          description: How to apply, or what to decide.
+          nullable: true
       required:
-      - severity
       - code
-      - message
-      description: A problem (or a pass) found on the page.
+      - severity
+      - classe
+      - alvo
+      - snippet
+      - arquivo
+      - fonte
+      - nota
+      description: The ready fix of one finding. `classe` says whether it is to paste, to fill in or to decide.
     LinksAudit:
       type: object
       properties:
@@ -93,6 +117,23 @@ components:
       - patch
       - api_index
       description: Addresses of the audit just created. Without a stored `id`, only `api_index` comes.
+    Achado:
+      type: object
+      properties:
+        severity:
+          type: string
+          description: Severity of the finding.
+        code:
+          type: string
+          description: Stable check code, e.g. `title_missing`. It is what you filter by.
+        message:
+          type: string
+          description: The finding in one sentence, ready to show a person.
+      required:
+      - severity
+      - code
+      - message
+      description: A problem (or a pass) found on the page.
     CotaAudit:
       type: object
       properties:
@@ -106,6 +147,23 @@ components:
       - free_per_day
       - price_usd
       description: How much is still free and what it costs past that.
+    ContagemAchados:
+      type: object
+      properties:
+        errors:
+          type: integer
+          description: Serious findings.
+        warnings:
+          type: integer
+          description: Findings that deserve attention.
+        info:
+          type: integer
+          description: Observations without severity.
+      required:
+      - errors
+      - warnings
+      - info
+      description: How many findings of each severity — the summary that fits in a badge.
     Audit:
       type: object
       properties:
@@ -307,64 +365,6 @@ components:
       - robotsTxt
       - sitemap
       description: Everything the page declares about itself. It is the most consulted object of the API.
-    ContagemAchados:
-      type: object
-      properties:
-        errors:
-          type: integer
-          description: Serious findings.
-        warnings:
-          type: integer
-          description: Findings that deserve attention.
-        info:
-          type: integer
-          description: Observations without severity.
-      required:
-      - errors
-      - warnings
-      - info
-      description: How many findings of each severity — the summary that fits in a badge.
-    Correcao:
-      type: object
-      properties:
-        code:
-          type: string
-          description: The same `code` as the finding (`Achado.code`).
-        severity:
-          type: string
-          description: Severity of the source finding.
-        classe:
-          type: string
-          description: '`deterministico` comes whole from the page; `molde` has a `{{…}}` placeholder; `sem_patch` is an instruction.'
-        alvo:
-          type: string
-          description: 'Where to apply: `head`, `corpo`, `img`, `arquivo` or `pagina` (instruction).'
-        snippet:
-          type: string
-          description: The ready tag (or with a placeholder). `null` for files and for `sem_patch`.
-          nullable: true
-        arquivo:
-          type: object
-          description: '`path` and `conteudo` when the fix is a file at the host root.'
-          nullable: true
-        fonte:
-          type: string
-          description: Where the value came from, or what the page already had (for the template or to check the cut).
-          nullable: true
-        nota:
-          type: string
-          description: How to apply, or what to decide.
-          nullable: true
-      required:
-      - code
-      - severity
-      - classe
-      - alvo
-      - snippet
-      - arquivo
-      - fonte
-      - nota
-      description: The ready fix of one finding. `classe` says whether it is to paste, to fill in or to decide.
   securitySchemes:
     bearerAuth:
       type: http

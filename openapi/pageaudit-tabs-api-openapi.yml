@@ -251,6 +251,73 @@ paths:
       - Tabs
 components:
   schemas:
+    Ok:
+      type: object
+      properties:
+        ok:
+          type: boolean
+          description: Always `true` — failure comes as a 4xx/5xx status, not as `ok:false`.
+      required:
+      - ok
+      description: Write confirmation with no body of its own to return.
+    Correcao:
+      type: object
+      properties:
+        code:
+          type: string
+          description: The same `code` as the finding (`Achado.code`).
+        severity:
+          type: string
+          description: Severity of the source finding.
+        classe:
+          type: string
+          description: '`deterministico` comes whole from the page; `molde` has a `{{…}}` placeholder; `sem_patch` is an instruction.'
+        alvo:
+          type: string
+          description: 'Where to apply: `head`, `corpo`, `img`, `arquivo` or `pagina` (instruction).'
+        snippet:
+          type: string
+          description: The ready tag (or with a placeholder). `null` for files and for `sem_patch`.
+          nullable: true
+        arquivo:
+          type: object
+          description: '`path` and `conteudo` when the fix is a file at the host root.'
+          nullable: true
+        fonte:
+          type: string
+          description: Where the value came from, or what the page already had (for the template or to check the cut).
+          nullable: true
+        nota:
+          type: string
+          description: How to apply, or what to decide.
+          nullable: true
+      required:
+      - code
+      - severity
+      - classe
+      - alvo
+      - snippet
+      - arquivo
+      - fonte
+      - nota
+      description: The ready fix of one finding. `classe` says whether it is to paste, to fill in or to decide.
+    Achado:
+      type: object
+      properties:
+        severity:
+          type: string
+          description: Severity of the finding.
+        code:
+          type: string
+          description: Stable check code, e.g. `title_missing`. It is what you filter by.
+        message:
+          type: string
+          description: The finding in one sentence, ready to show a person.
+      required:
+      - severity
+      - code
+      - message
+      description: A problem (or a pass) found on the page.
     Workspace:
       type: object
       properties:
@@ -290,32 +357,127 @@ components:
       - gate
       - billing
       description: The owner's whole workspace, with the active tab's result already rehydrated — one call to draw the screen.
-    Achado:
+    Gate:
       type: object
       properties:
-        severity:
+        ip:
           type: string
-          description: Severity of the finding.
-        code:
-          type: string
-          description: Stable check code, e.g. `title_missing`. It is what you filter by.
-        message:
-          type: string
-          description: The finding in one sentence, ready to show a person.
-      required:
-      - severity
-      - code
-      - message
-      description: A problem (or a pass) found on the page.
-    Ok:
-      type: object
-      properties:
-        ok:
+          description: IP seen by the edge, already masked.
+        now:
+          type: integer
+          description: Time of the query, in epoch.
+        configured:
           type: boolean
-          description: Always `true` — failure comes as a 4xx/5xx status, not as `ok:false`.
+          description: Whether Turnstile is configured in this environment.
+        free_allowance:
+          type: integer
+          description: Free audits per day.
+        free_remaining:
+          type: integer
+          description: How many remain today for this IP.
+        verified_until:
+          type: integer
+          description: Until when the verification already done is valid.
+          nullable: true
+        needs_verification:
+          type: boolean
+          description: '`true` when the next call will ask for Turnstile (human) or 402 (agent).'
+        sitekey:
+          type: string
+          description: Turnstile sitekey, for the browser to build the challenge.
+          nullable: true
       required:
-      - ok
-      description: Write confirmation with no body of its own to return.
+      - ip
+      - now
+      - configured
+      - free_allowance
+      - free_remaining
+      - verified_until
+      - needs_verification
+      - sitekey
+      description: How much of the daily allowance still exists for this IP, and whether Turnstile is already required.
+    AuditGravado:
+      type: object
+      properties:
+        audit_id:
+          type: string
+          description: ID of the audit.
+        url:
+          type: string
+          description: Final audited URL, after following the redirects.
+        score:
+          type: integer
+          description: Score from 0 to 100.
+        summary:
+          allOf:
+          - $ref: '#/components/schemas/ResumoPagina'
+          description: What the page declared at the time of the run.
+          nullable: true
+        counts:
+          allOf:
+          - $ref: '#/components/schemas/ContagemAchados'
+          description: How many findings of each severity.
+        issues:
+          type: array
+          items:
+            $ref: '#/components/schemas/Achado'
+          description: Everything found in that run.
+        fixes:
+          type: array
+          items:
+            $ref: '#/components/schemas/Correcao'
+          description: The ready fix of each finding; an audit stored before this existed gets the computation on read.
+        jsonLd:
+          type: array
+          items:
+            type: object
+          description: The raw JSON-LD blocks stored.
+        headers:
+          type: object
+          description: Headers of the target's response, as they were in the run.
+        truncated:
+          type: array
+          items:
+            type: string
+          description: What was cut by size when storing.
+        share_slug:
+          type: string
+          description: Public slug, if this audit was shared.
+          nullable: true
+        created_at:
+          type: string
+          description: When the run happened (UTC).
+      required:
+      - audit_id
+      - url
+      - score
+      - summary
+      - counts
+      - issues
+      - fixes
+      - jsonLd
+      - headers
+      - truncated
+      - share_slug
+      - created_at
+      description: The same report re-read from the database. It has no `quota` and no `_links` (it is a read, not a run) and gains the date and the share slug.
+    ContagemAchados:
+      type: object
+      properties:
+        errors:
+          type: integer
+          description: Serious findings.
+        warnings:
+          type: integer
+          description: Findings that deserve attention.
+        info:
+          type: integer
+          description: Observations without severity.
+      required:
+      - errors
+      - warnings
+      - info
+      description: How many findings of each severity — the summary that fits in a badge.
     Aba:
       type: object
       properties:
@@ -483,168 +645,6 @@ components:
       - robotsTxt
       - sitemap
       description: Everything the page declares about itself. It is the most consulted object of the API.
-    AuditGravado:
-      type: object
-      properties:
-        audit_id:
-          type: string
-          description: ID of the audit.
-        url:
-          type: string
-          description: Final audited URL, after following the redirects.
-        score:
-          type: integer
-          description: Score from 0 to 100.
-        summary:
-          allOf:
-          - $ref: '#/components/schemas/ResumoPagina'
-          description: What the page declared at the time of the run.
-          nullable: true
-        counts:
-          allOf:
-          - $ref: '#/components/schemas/ContagemAchados'
-          description: How many findings of each severity.
-        issues:
-          type: array
-          items:
-            $ref: '#/components/schemas/Achado'
-          description: Everything found in that run.
-        fixes:
-          type: array
-          items:
-            $ref: '#/components/schemas/Correcao'
-          description: The ready fix of each finding; an audit stored before this existed gets the computation on read.
-        jsonLd:
-          type: array
-          items:
-            type: object
-          description: The raw JSON-LD blocks stored.
-        headers:
-          type: object
-          description: Headers of the target's response, as they were in the run.
-        truncated:
-          type: array
-          items:
-            type: string
-          description: What was cut by size when storing.
-        share_slug:
-          type: string
-          description: Public slug, if this audit was shared.
-          nullable: true
-        created_at:
-          type: string
-          description: When the run happened (UTC).
-      required:
-      - audit_id
-      - url
-      - score
-      - summary
-      - counts
-      - issues
-      - fixes
-      - jsonLd
-      - headers
-      - truncated
-      - share_slug
-      - created_at
-      description: The same report re-read from the database. It has no `quota` and no `_links` (it is a read, not a run) and gains the date and the share slug.
-    ContagemAchados:
-      type: object
-      properties:
-        errors:
-          type: integer
-          description: Serious findings.
-        warnings:
-          type: integer
-          description: Findings that deserve attention.
-        info:
-          type: integer
-          description: Observations without severity.
-      required:
-      - errors
-      - warnings
-      - info
-      description: How many findings of each severity — the summary that fits in a badge.
-    Gate:
-      type: object
-      properties:
-        ip:
-          type: string
-          description: IP seen by the edge, already masked.
-        now:
-          type: integer
-          description: Time of the query, in epoch.
-        configured:
-          type: boolean
-          description: Whether Turnstile is configured in this environment.
-        free_allowance:
-          type: integer
-          description: Free audits per day.
-        free_remaining:
-          type: integer
-          description: How many remain today for this IP.
-        verified_until:
-          type: integer
-          description: Until when the verification already done is valid.
-          nullable: true
-        needs_verification:
-          type: boolean
-          description: '`true` when the next call will ask for Turnstile (human) or 402 (agent).'
-        sitekey:
-          type: string
-          description: Turnstile sitekey, for the browser to build the challenge.
-          nullable: true
-      required:
-      - ip
-      - now
-      - configured
-      - free_allowance
-      - free_remaining
-      - verified_until
-      - needs_verification
-      - sitekey
-      description: How much of the daily allowance still exists for this IP, and whether Turnstile is already required.
-    Correcao:
-      type: object
-      properties:
-        code:
-          type: string
-          description: The same `code` as the finding (`Achado.code`).
-        severity:
-          type: string
-          description: Severity of the source finding.
-        classe:
-          type: string
-          description: '`deterministico` comes whole from the page; `molde` has a `{{…}}` placeholder; `sem_patch` is an instruction.'
-        alvo:
-          type: string
-          description: 'Where to apply: `head`, `corpo`, `img`, `arquivo` or `pagina` (instruction).'
-        snippet:
-          type: string
-          description: The ready tag (or with a placeholder). `null` for files and for `sem_patch`.
-          nullable: true
-        arquivo:
-          type: object
-          description: '`path` and `conteudo` when the fix is a file at the host root.'
-          nullable: true
-        fonte:
-          type: string
-          description: Where the value came from, or what the page already had (for the template or to check the cut).
-          nullable: true
-        nota:
-          type: string
-          description: How to apply, or what to decide.
-          nullable: true
-      required:
-      - code
-      - severity
-      - classe
-      - alvo
-      - snippet
-      - arquivo
-      - fonte
-      - nota
-      description: The ready fix of one finding. `classe` says whether it is to paste, to fill in or to decide.
   securitySchemes:
     bearerAuth:
       type: http
