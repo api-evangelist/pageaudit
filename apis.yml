@@ -372,6 +372,9 @@ x-generated:
   confidence: 98
   at: '2026-09-05T11:48:17.911Z'
 common:
+- type: CapabilityMap
+  url: capabilities/pageaudit-capability-edges.yml
+  name: PageAudit Business Capability Map
 - type: AgentSkill
   url: https://pageaudit.online/okf/index.md
 - type: MCPServer

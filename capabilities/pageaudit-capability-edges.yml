@@ -1,0 +1,46 @@
+slug: pageaudit
+provider: PageAudit
+generated_by: planning/capability-mapping/scripts/classify_capabilities.py
+model: claude-opus-5
+frame:
+- Software & Technology
+min_confidence: 0.7
+capability_model:
+  source: https://github.com/vincentmakes/turbo-ea-capabilities
+  license: CC-BY-4.0
+  attribution: Turbo EA Capabilities by Vincent Verdet — Turbo EA, https://github.com/vincentmakes/turbo-ea-capabilities,
+    CC BY 4.0
+  notice: NOTICE
+edge_count: 3
+edges:
+- tag: Audit
+  spec_file: pageaudit-audit-api-openapi.yml
+  capability_id: BC-400.60
+  capability_id_l1: BC-400
+  capability_name: Digital Marketing Management
+  confidence: 0.75
+  evidence: 'POST /api/audit  audit_url  Audits a URL and returns the full report in one call; vendor:
+    "An agent-first technical SEO auditor that checks a page''s search appearance, sharing previews and
+    technical issues"'
+  reason: The operation performs technical SEO auditing of web pages and returns prioritised findings,
+    which is web/SEO work under Digital Marketing Management. Some residual ambiguity because the tool
+    is a developer utility rather than a marketing suite.
+- tag: Tabs
+  spec_file: pageaudit-tabs-api-openapi.yml
+  capability_id: BC-400.60
+  capability_id_l1: BC-400
+  capability_name: Digital Marketing Management
+  confidence: 0.75
+  evidence: Re-audits the tab's URL and stores a new report
+  reason: Core workspace for running and storing technical SEO audits of URLs (findings, page summaries,
+    corrections) — web/SEO management under Digital Marketing.
+- tag: Audits
+  spec_file: pageaudit-audits-api-openapi.yml
+  capability_id: BC-400.60
+  capability_id_l1: BC-400
+  capability_name: Digital Marketing Management
+  confidence: 0.7
+  evidence: 'GET /api/audits/{id}/patch  The consolidated patch of an audit: the block ready to paste,
+    the files to…'
+  reason: Retrieval, patching and sharing of stored SEO audits — continuation of the same web/SEO improvement
+    capability. Sharing/slug operations are plumbing, so confidence is moderate.
