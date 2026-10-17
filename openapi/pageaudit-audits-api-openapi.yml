@@ -129,170 +129,6 @@ paths:
       - Audits
 components:
   schemas:
-    Correcao:
-      type: object
-      properties:
-        code:
-          type: string
-          description: The same `code` as the finding (`Achado.code`).
-        severity:
-          type: string
-          description: Severity of the source finding.
-        classe:
-          type: string
-          description: '`deterministico` comes whole from the page; `molde` has a `{{…}}` placeholder; `sem_patch` is an instruction.'
-        alvo:
-          type: string
-          description: 'Where to apply: `head`, `corpo`, `img`, `arquivo` or `pagina` (instruction).'
-        snippet:
-          type: string
-          description: The ready tag (or with a placeholder). `null` for files and for `sem_patch`.
-          nullable: true
-        arquivo:
-          type: object
-          description: '`path` and `conteudo` when the fix is a file at the host root.'
-          nullable: true
-        fonte:
-          type: string
-          description: Where the value came from, or what the page already had (for the template or to check the cut).
-          nullable: true
-        nota:
-          type: string
-          description: How to apply, or what to decide.
-          nullable: true
-      required:
-      - code
-      - severity
-      - classe
-      - alvo
-      - snippet
-      - arquivo
-      - fonte
-      - nota
-      description: The ready fix of one finding. `classe` says whether it is to paste, to fill in or to decide.
-    SemPatch:
-      type: object
-      properties:
-        code:
-          type: string
-          description: Source finding.
-        nota:
-          type: string
-          description: What to check or decide.
-      required:
-      - code
-      - nota
-      description: 'Finding without an automatic fix: it is a decision or infrastructure.'
-    Compartilhamento:
-      type: object
-      properties:
-        ok:
-          type: boolean
-          description: Always `true`.
-        shared:
-          type: boolean
-          description: Whether the audit is published at the end of the call.
-        slug:
-          type: string
-          description: Public, non-enumerable slug.
-        path:
-          type: string
-          description: Path of the report's HTML page.
-        badge:
-          type: string
-          description: Path of the score badge SVG.
-        _links:
-          type: object
-          description: Report, JSON and badge, as absolute URLs.
-      required:
-      - ok
-      - shared
-      - slug
-      - path
-      - badge
-      - _links
-      description: The result of publishing an audit under a non-enumerable slug.
-    ArquivoPatch:
-      type: object
-      properties:
-        code:
-          type: string
-          description: Finding that originated it (`robots_txt_missing`, `sitemap_missing`).
-        path:
-          type: string
-          description: Absolute path on the host, e.g. `/robots.txt`.
-        conteudo:
-          type: string
-          description: Full content of the file.
-      required:
-      - code
-      - path
-      - conteudo
-      description: A file to create at the host root.
-    MoldePatch:
-      type: object
-      properties:
-        code:
-          type: string
-          description: Source finding.
-        alvo:
-          type: string
-          description: '`head`, `corpo` or `img`.'
-        snippet:
-          type: string
-          description: The tag with `{{PLACEHOLDER}}`.
-        fonte:
-          type: string
-          description: Suggestion taken from the page itself (H1, og:description…), if any.
-          nullable: true
-        nota:
-          type: string
-          description: What to fill in and the limit.
-      required:
-      - code
-      - alvo
-      - snippet
-      - fonte
-      - nota
-      description: 'A tag with a marked placeholder: content missing that only the owner knows.'
-    Achado:
-      type: object
-      properties:
-        severity:
-          type: string
-          description: Severity of the finding.
-        code:
-          type: string
-          description: Stable check code, e.g. `title_missing`. It is what you filter by.
-        message:
-          type: string
-          description: The finding in one sentence, ready to show a person.
-      required:
-      - severity
-      - code
-      - message
-      description: A problem (or a pass) found on the page.
-    ResumoPatch:
-      type: object
-      properties:
-        deterministicos:
-          type: integer
-          description: Ready to paste (head + files).
-        moldes:
-          type: integer
-          description: With a placeholder.
-        sem_patch:
-          type: integer
-          description: Instruction only.
-        total:
-          type: integer
-          description: Findings considered.
-      required:
-      - deterministicos
-      - moldes
-      - sem_patch
-      - total
-      description: How many fixes of each class.
     Patch:
       type: object
       properties:
@@ -343,6 +179,44 @@ components:
       - como_aplicar
       - _links
       description: The consolidated patch of an audit, ready for the agent that builds the site to apply.
+    ContagemAchados:
+      type: object
+      properties:
+        errors:
+          type: integer
+          description: Serious findings.
+        warnings:
+          type: integer
+          description: Findings that deserve attention.
+        info:
+          type: integer
+          description: Observations without severity.
+      required:
+      - errors
+      - warnings
+      - info
+      description: How many findings of each severity — the summary that fits in a badge.
+    ResumoPatch:
+      type: object
+      properties:
+        deterministicos:
+          type: integer
+          description: Ready to paste (head + files).
+        moldes:
+          type: integer
+          description: With a placeholder.
+        sem_patch:
+          type: integer
+          description: Instruction only.
+        total:
+          type: integer
+          description: Findings considered.
+      required:
+      - deterministicos
+      - moldes
+      - sem_patch
+      - total
+      description: How many fixes of each class.
     AuditGravado:
       type: object
       properties:
@@ -408,23 +282,115 @@ components:
       - share_slug
       - created_at
       description: The same report re-read from the database. It has no `quota` and no `_links` (it is a read, not a run) and gains the date and the share slug.
-    ContagemAchados:
+    Compartilhamento:
       type: object
       properties:
-        errors:
-          type: integer
-          description: Serious findings.
-        warnings:
-          type: integer
-          description: Findings that deserve attention.
-        info:
-          type: integer
-          description: Observations without severity.
+        ok:
+          type: boolean
+          description: Always `true`.
+        shared:
+          type: boolean
+          description: Whether the audit is published at the end of the call.
+        slug:
+          type: string
+          description: Public, non-enumerable slug.
+        path:
+          type: string
+          description: Path of the report's HTML page.
+        badge:
+          type: string
+          description: Path of the score badge SVG.
+        _links:
+          type: object
+          description: Report, JSON and badge, as absolute URLs.
       required:
-      - errors
-      - warnings
-      - info
-      description: How many findings of each severity — the summary that fits in a badge.
+      - ok
+      - shared
+      - slug
+      - path
+      - badge
+      - _links
+      description: The result of publishing an audit under a non-enumerable slug.
+    Correcao:
+      type: object
+      properties:
+        code:
+          type: string
+          description: The same `code` as the finding (`Achado.code`).
+        severity:
+          type: string
+          description: Severity of the source finding.
+        classe:
+          type: string
+          description: '`deterministico` comes whole from the page; `molde` has a `{{…}}` placeholder; `sem_patch` is an instruction.'
+        alvo:
+          type: string
+          description: 'Where to apply: `head`, `corpo`, `img`, `arquivo` or `pagina` (instruction).'
+        snippet:
+          type: string
+          description: The ready tag (or with a placeholder). `null` for files and for `sem_patch`.
+          nullable: true
+        arquivo:
+          type: object
+          description: '`path` and `conteudo` when the fix is a file at the host root.'
+          nullable: true
+        fonte:
+          type: string
+          description: Where the value came from, or what the page already had (for the template or to check the cut).
+          nullable: true
+        nota:
+          type: string
+          description: How to apply, or what to decide.
+          nullable: true
+      required:
+      - code
+      - severity
+      - classe
+      - alvo
+      - snippet
+      - arquivo
+      - fonte
+      - nota
+      description: The ready fix of one finding. `classe` says whether it is to paste, to fill in or to decide.
+    MoldePatch:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Source finding.
+        alvo:
+          type: string
+          description: '`head`, `corpo` or `img`.'
+        snippet:
+          type: string
+          description: The tag with `{{PLACEHOLDER}}`.
+        fonte:
+          type: string
+          description: Suggestion taken from the page itself (H1, og:description…), if any.
+          nullable: true
+        nota:
+          type: string
+          description: What to fill in and the limit.
+      required:
+      - code
+      - alvo
+      - snippet
+      - fonte
+      - nota
+      description: 'A tag with a marked placeholder: content missing that only the owner knows.'
+    SemPatch:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Source finding.
+        nota:
+          type: string
+          description: What to check or decide.
+      required:
+      - code
+      - nota
+      description: 'Finding without an automatic fix: it is a decision or infrastructure.'
     ResumoPagina:
       type: object
       properties:
@@ -556,6 +522,40 @@ components:
       - robotsTxt
       - sitemap
       description: Everything the page declares about itself. It is the most consulted object of the API.
+    Achado:
+      type: object
+      properties:
+        severity:
+          type: string
+          description: Severity of the finding.
+        code:
+          type: string
+          description: Stable check code, e.g. `title_missing`. It is what you filter by.
+        message:
+          type: string
+          description: The finding in one sentence, ready to show a person.
+      required:
+      - severity
+      - code
+      - message
+      description: A problem (or a pass) found on the page.
+    ArquivoPatch:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Finding that originated it (`robots_txt_missing`, `sitemap_missing`).
+        path:
+          type: string
+          description: Absolute path on the host, e.g. `/robots.txt`.
+        conteudo:
+          type: string
+          description: Full content of the file.
+      required:
+      - code
+      - path
+      - conteudo
+      description: A file to create at the host root.
   securitySchemes:
     bearerAuth:
       type: http

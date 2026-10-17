@@ -46,77 +46,23 @@ paths:
       - Me
 components:
   schemas:
-    Correcao:
+    ContagemAchados:
       type: object
       properties:
-        code:
-          type: string
-          description: The same `code` as the finding (`Achado.code`).
-        severity:
-          type: string
-          description: Severity of the source finding.
-        classe:
-          type: string
-          description: '`deterministico` comes whole from the page; `molde` has a `{{…}}` placeholder; `sem_patch` is an instruction.'
-        alvo:
-          type: string
-          description: 'Where to apply: `head`, `corpo`, `img`, `arquivo` or `pagina` (instruction).'
-        snippet:
-          type: string
-          description: The ready tag (or with a placeholder). `null` for files and for `sem_patch`.
-          nullable: true
-        arquivo:
-          type: object
-          description: '`path` and `conteudo` when the fix is a file at the host root.'
-          nullable: true
-        fonte:
-          type: string
-          description: Where the value came from, or what the page already had (for the template or to check the cut).
-          nullable: true
-        nota:
-          type: string
-          description: How to apply, or what to decide.
-          nullable: true
+        errors:
+          type: integer
+          description: Serious findings.
+        warnings:
+          type: integer
+          description: Findings that deserve attention.
+        info:
+          type: integer
+          description: Observations without severity.
       required:
-      - code
-      - severity
-      - classe
-      - alvo
-      - snippet
-      - arquivo
-      - fonte
-      - nota
-      description: The ready fix of one finding. `classe` says whether it is to paste, to fill in or to decide.
-    Conta:
-      type: object
-      properties:
-        id:
-          type: string
-          description: ID of the account.
-        email:
-          type: string
-          description: E-mail confirmed by code.
-      required:
-      - id
-      - email
-      description: The person behind the session.
-    Achado:
-      type: object
-      properties:
-        severity:
-          type: string
-          description: Severity of the finding.
-        code:
-          type: string
-          description: Stable check code, e.g. `title_missing`. It is what you filter by.
-        message:
-          type: string
-          description: The finding in one sentence, ready to show a person.
-      required:
-      - severity
-      - code
-      - message
-      description: A problem (or a pass) found on the page.
+      - errors
+      - warnings
+      - info
+      description: How many findings of each severity — the summary that fits in a badge.
     AuditGravado:
       type: object
       properties:
@@ -182,47 +128,60 @@ components:
       - share_slug
       - created_at
       description: The same report re-read from the database. It has no `quota` and no `_links` (it is a read, not a run) and gains the date and the share slug.
-    ContagemAchados:
+    Correcao:
       type: object
       properties:
-        errors:
-          type: integer
-          description: Serious findings.
-        warnings:
-          type: integer
-          description: Findings that deserve attention.
-        info:
-          type: integer
-          description: Observations without severity.
-      required:
-      - errors
-      - warnings
-      - info
-      description: How many findings of each severity — the summary that fits in a badge.
-    Trial:
-      type: object
-      properties:
-        days:
-          type: integer
-          description: Trial length in days.
-        active:
-          type: boolean
-          description: Whether it is in force now.
-        days_left:
-          type: integer
-          description: How many days remain.
-        ends_at:
+        code:
           type: string
-          description: When it ends (UTC).
+          description: The same `code` as the finding (`Achado.code`).
+        severity:
+          type: string
+          description: Severity of the source finding.
+        classe:
+          type: string
+          description: '`deterministico` comes whole from the page; `molde` has a `{{…}}` placeholder; `sem_patch` is an instruction.'
+        alvo:
+          type: string
+          description: 'Where to apply: `head`, `corpo`, `img`, `arquivo` or `pagina` (instruction).'
+        snippet:
+          type: string
+          description: The ready tag (or with a placeholder). `null` for files and for `sem_patch`.
           nullable: true
-        granted:
-          type: boolean
-          description: '`true` when THIS call granted the trial.'
+        arquivo:
+          type: object
+          description: '`path` and `conteudo` when the fix is a file at the host root.'
+          nullable: true
+        fonte:
+          type: string
+          description: Where the value came from, or what the page already had (for the template or to check the cut).
+          nullable: true
+        nota:
+          type: string
+          description: How to apply, or what to decide.
+          nullable: true
       required:
-      - days
-      - active
-      - ends_at
-      description: The paywall-free period that confirming the e-mail grants. It is the alternative to paying.
+      - code
+      - severity
+      - classe
+      - alvo
+      - snippet
+      - arquivo
+      - fonte
+      - nota
+      description: The ready fix of one finding. `classe` says whether it is to paste, to fill in or to decide.
+    Conta:
+      type: object
+      properties:
+        id:
+          type: string
+          description: ID of the account.
+        email:
+          type: string
+          description: E-mail confirmed by code.
+      required:
+      - id
+      - email
+      description: The person behind the session.
     ResumoPagina:
       type: object
       properties:
@@ -354,6 +313,47 @@ components:
       - robotsTxt
       - sitemap
       description: Everything the page declares about itself. It is the most consulted object of the API.
+    Achado:
+      type: object
+      properties:
+        severity:
+          type: string
+          description: Severity of the finding.
+        code:
+          type: string
+          description: Stable check code, e.g. `title_missing`. It is what you filter by.
+        message:
+          type: string
+          description: The finding in one sentence, ready to show a person.
+      required:
+      - severity
+      - code
+      - message
+      description: A problem (or a pass) found on the page.
+    Trial:
+      type: object
+      properties:
+        days:
+          type: integer
+          description: Trial length in days.
+        active:
+          type: boolean
+          description: Whether it is in force now.
+        days_left:
+          type: integer
+          description: How many days remain.
+        ends_at:
+          type: string
+          description: When it ends (UTC).
+          nullable: true
+        granted:
+          type: boolean
+          description: '`true` when THIS call granted the trial.'
+      required:
+      - days
+      - active
+      - ends_at
+      description: The paywall-free period that confirming the e-mail grants. It is the alternative to paying.
   securitySchemes:
     bearerAuth:
       type: http

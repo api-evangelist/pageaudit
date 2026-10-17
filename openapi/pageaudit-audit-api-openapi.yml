@@ -56,6 +56,56 @@ paths:
       - Audit
 components:
   schemas:
+    LinksAudit:
+      type: object
+      properties:
+        self:
+          type: string
+          description: This audit, to re-read without re-auditing.
+        patch:
+          type: string
+          description: '`GET /api/audits/:id/patch` — the consolidated patch of this audit.'
+          nullable: true
+        share:
+          type: string
+          description: Where to publish this audit under a public slug.
+        api_index:
+          type: string
+          description: Self-describing API index.
+      required:
+      - patch
+      - api_index
+      description: Addresses of the audit just created. Without a stored `id`, only `api_index` comes.
+    ContagemAchados:
+      type: object
+      properties:
+        errors:
+          type: integer
+          description: Serious findings.
+        warnings:
+          type: integer
+          description: Findings that deserve attention.
+        info:
+          type: integer
+          description: Observations without severity.
+      required:
+      - errors
+      - warnings
+      - info
+      description: How many findings of each severity — the summary that fits in a badge.
+    CotaAudit:
+      type: object
+      properties:
+        free_per_day:
+          type: integer
+          description: Free audits per IP per day.
+        price_usd:
+          type: number
+          description: Price of an audit beyond the allowance, in USD.
+      required:
+      - free_per_day
+      - price_usd
+      description: How much is still free and what it costs past that.
     Correcao:
       type: object
       properties:
@@ -97,73 +147,6 @@ components:
       - fonte
       - nota
       description: The ready fix of one finding. `classe` says whether it is to paste, to fill in or to decide.
-    LinksAudit:
-      type: object
-      properties:
-        self:
-          type: string
-          description: This audit, to re-read without re-auditing.
-        patch:
-          type: string
-          description: '`GET /api/audits/:id/patch` — the consolidated patch of this audit.'
-          nullable: true
-        share:
-          type: string
-          description: Where to publish this audit under a public slug.
-        api_index:
-          type: string
-          description: Self-describing API index.
-      required:
-      - patch
-      - api_index
-      description: Addresses of the audit just created. Without a stored `id`, only `api_index` comes.
-    Achado:
-      type: object
-      properties:
-        severity:
-          type: string
-          description: Severity of the finding.
-        code:
-          type: string
-          description: Stable check code, e.g. `title_missing`. It is what you filter by.
-        message:
-          type: string
-          description: The finding in one sentence, ready to show a person.
-      required:
-      - severity
-      - code
-      - message
-      description: A problem (or a pass) found on the page.
-    CotaAudit:
-      type: object
-      properties:
-        free_per_day:
-          type: integer
-          description: Free audits per IP per day.
-        price_usd:
-          type: number
-          description: Price of an audit beyond the allowance, in USD.
-      required:
-      - free_per_day
-      - price_usd
-      description: How much is still free and what it costs past that.
-    ContagemAchados:
-      type: object
-      properties:
-        errors:
-          type: integer
-          description: Serious findings.
-        warnings:
-          type: integer
-          description: Findings that deserve attention.
-        info:
-          type: integer
-          description: Observations without severity.
-      required:
-      - errors
-      - warnings
-      - info
-      description: How many findings of each severity — the summary that fits in a badge.
     Audit:
       type: object
       properties:
@@ -365,6 +348,23 @@ components:
       - robotsTxt
       - sitemap
       description: Everything the page declares about itself. It is the most consulted object of the API.
+    Achado:
+      type: object
+      properties:
+        severity:
+          type: string
+          description: Severity of the finding.
+        code:
+          type: string
+          description: Stable check code, e.g. `title_missing`. It is what you filter by.
+        message:
+          type: string
+          description: The finding in one sentence, ready to show a person.
+      required:
+      - severity
+      - code
+      - message
+      description: A problem (or a pass) found on the page.
   securitySchemes:
     bearerAuth:
       type: http

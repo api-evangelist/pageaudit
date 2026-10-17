@@ -251,151 +251,23 @@ paths:
       - Tabs
 components:
   schemas:
-    Ok:
+    ContagemAchados:
       type: object
       properties:
-        ok:
-          type: boolean
-          description: Always `true` — failure comes as a 4xx/5xx status, not as `ok:false`.
-      required:
-      - ok
-      description: Write confirmation with no body of its own to return.
-    Correcao:
-      type: object
-      properties:
-        code:
-          type: string
-          description: The same `code` as the finding (`Achado.code`).
-        severity:
-          type: string
-          description: Severity of the source finding.
-        classe:
-          type: string
-          description: '`deterministico` comes whole from the page; `molde` has a `{{…}}` placeholder; `sem_patch` is an instruction.'
-        alvo:
-          type: string
-          description: 'Where to apply: `head`, `corpo`, `img`, `arquivo` or `pagina` (instruction).'
-        snippet:
-          type: string
-          description: The ready tag (or with a placeholder). `null` for files and for `sem_patch`.
-          nullable: true
-        arquivo:
-          type: object
-          description: '`path` and `conteudo` when the fix is a file at the host root.'
-          nullable: true
-        fonte:
-          type: string
-          description: Where the value came from, or what the page already had (for the template or to check the cut).
-          nullable: true
-        nota:
-          type: string
-          description: How to apply, or what to decide.
-          nullable: true
-      required:
-      - code
-      - severity
-      - classe
-      - alvo
-      - snippet
-      - arquivo
-      - fonte
-      - nota
-      description: The ready fix of one finding. `classe` says whether it is to paste, to fill in or to decide.
-    Achado:
-      type: object
-      properties:
-        severity:
-          type: string
-          description: Severity of the finding.
-        code:
-          type: string
-          description: Stable check code, e.g. `title_missing`. It is what you filter by.
-        message:
-          type: string
-          description: The finding in one sentence, ready to show a person.
-      required:
-      - severity
-      - code
-      - message
-      description: A problem (or a pass) found on the page.
-    Workspace:
-      type: object
-      properties:
-        tabs:
-          type: array
-          items:
-            $ref: '#/components/schemas/Aba'
-          description: Every tab of the owner.
-        active_id:
-          type: string
-          description: Which tab is in focus.
-          nullable: true
-        active_result:
-          allOf:
-          - $ref: '#/components/schemas/AuditGravado'
-          description: The last result of the active tab, so a second call is not needed.
-          nullable: true
-        limit:
+        errors:
           type: integer
-          description: How many tabs fit before paying.
-        owner:
-          type: string
-          description: Identifier of this workspace's owner.
-        gate:
-          allOf:
-          - $ref: '#/components/schemas/Gate'
-          description: How much of the IP's free allowance remains.
-        billing:
-          type: object
-          description: Prices and usage, the same `GET /api/billing` returns.
+          description: Serious findings.
+        warnings:
+          type: integer
+          description: Findings that deserve attention.
+        info:
+          type: integer
+          description: Observations without severity.
       required:
-      - tabs
-      - active_id
-      - active_result
-      - limit
-      - owner
-      - gate
-      - billing
-      description: The owner's whole workspace, with the active tab's result already rehydrated — one call to draw the screen.
-    Gate:
-      type: object
-      properties:
-        ip:
-          type: string
-          description: IP seen by the edge, already masked.
-        now:
-          type: integer
-          description: Time of the query, in epoch.
-        configured:
-          type: boolean
-          description: Whether Turnstile is configured in this environment.
-        free_allowance:
-          type: integer
-          description: Free audits per day.
-        free_remaining:
-          type: integer
-          description: How many remain today for this IP.
-        verified_until:
-          type: integer
-          description: Until when the verification already done is valid.
-          nullable: true
-        needs_verification:
-          type: boolean
-          description: '`true` when the next call will ask for Turnstile (human) or 402 (agent).'
-        sitekey:
-          type: string
-          description: Turnstile sitekey, for the browser to build the challenge.
-          nullable: true
-      required:
-      - ip
-      - now
-      - configured
-      - free_allowance
-      - free_remaining
-      - verified_until
-      - needs_verification
-      - sitekey
-      description: How much of the daily allowance still exists for this IP, and whether Turnstile is already required.
+      - errors
+      - warnings
+      - info
+      description: How many findings of each severity — the summary that fits in a badge.
     AuditGravado:
       type: object
       properties:
@@ -461,59 +333,151 @@ components:
       - share_slug
       - created_at
       description: The same report re-read from the database. It has no `quota` and no `_links` (it is a read, not a run) and gains the date and the share slug.
-    ContagemAchados:
+    Correcao:
       type: object
       properties:
-        errors:
-          type: integer
-          description: Serious findings.
-        warnings:
-          type: integer
-          description: Findings that deserve attention.
-        info:
-          type: integer
-          description: Observations without severity.
-      required:
-      - errors
-      - warnings
-      - info
-      description: How many findings of each severity — the summary that fits in a badge.
-    Aba:
-      type: object
-      properties:
-        id:
+        code:
           type: string
-          description: ID of the tab.
-        url:
+          description: The same `code` as the finding (`Achado.code`).
+        severity:
           type: string
-          description: URL the tab follows.
-        alias:
+          description: Severity of the source finding.
+        classe:
           type: string
-          description: Label the person gave the tab.
+          description: '`deterministico` comes whole from the page; `molde` has a `{{…}}` placeholder; `sem_patch` is an instruction.'
+        alvo:
+          type: string
+          description: 'Where to apply: `head`, `corpo`, `img`, `arquivo` or `pagina` (instruction).'
+        snippet:
+          type: string
+          description: The ready tag (or with a placeholder). `null` for files and for `sem_patch`.
           nullable: true
-        active:
+        arquivo:
+          type: object
+          description: '`path` and `conteudo` when the fix is a file at the host root.'
+          nullable: true
+        fonte:
+          type: string
+          description: Where the value came from, or what the page already had (for the template or to check the cut).
+          nullable: true
+        nota:
+          type: string
+          description: How to apply, or what to decide.
+          nullable: true
+      required:
+      - code
+      - severity
+      - classe
+      - alvo
+      - snippet
+      - arquivo
+      - fonte
+      - nota
+      description: The ready fix of one finding. `classe` says whether it is to paste, to fill in or to decide.
+    Gate:
+      type: object
+      properties:
+        ip:
+          type: string
+          description: IP seen by the edge, already masked.
+        now:
+          type: integer
+          description: Time of the query, in epoch.
+        configured:
           type: boolean
-          description: Whether it is the focused tab in the workspace.
-        audit_id:
-          type: string
-          description: Audit of this tab's last run.
-          nullable: true
-        score:
+          description: Whether Turnstile is configured in this environment.
+        free_allowance:
           type: integer
-          description: Score of the last run.
+          description: Free audits per day.
+        free_remaining:
+          type: integer
+          description: How many remain today for this IP.
+        verified_until:
+          type: integer
+          description: Until when the verification already done is valid.
           nullable: true
-        created_at:
+        needs_verification:
+          type: boolean
+          description: '`true` when the next call will ask for Turnstile (human) or 402 (agent).'
+        sitekey:
           type: string
-          description: When the tab was opened (UTC).
+          description: Turnstile sitekey, for the browser to build the challenge.
+          nullable: true
       required:
-      - id
-      - url
-      - alias
-      - active
-      - audit_id
-      - score
-      - created_at
-      description: 'A workspace tab: one followed URL, with the last result kept.'
+      - ip
+      - now
+      - configured
+      - free_allowance
+      - free_remaining
+      - verified_until
+      - needs_verification
+      - sitekey
+      description: How much of the daily allowance still exists for this IP, and whether Turnstile is already required.
+    Workspace:
+      type: object
+      properties:
+        tabs:
+          type: array
+          items:
+            $ref: '#/components/schemas/Aba'
+          description: Every tab of the owner.
+        active_id:
+          type: string
+          description: Which tab is in focus.
+          nullable: true
+        active_result:
+          allOf:
+          - $ref: '#/components/schemas/AuditGravado'
+          description: The last result of the active tab, so a second call is not needed.
+          nullable: true
+        limit:
+          type: integer
+          description: How many tabs fit before paying.
+        owner:
+          type: string
+          description: Identifier of this workspace's owner.
+        gate:
+          allOf:
+          - $ref: '#/components/schemas/Gate'
+          description: How much of the IP's free allowance remains.
+        billing:
+          type: object
+          description: Prices and usage, the same `GET /api/billing` returns.
+      required:
+      - tabs
+      - active_id
+      - active_result
+      - limit
+      - owner
+      - gate
+      - billing
+      description: The owner's whole workspace, with the active tab's result already rehydrated — one call to draw the screen.
+    Ok:
+      type: object
+      properties:
+        ok:
+          type: boolean
+          description: Always `true` — failure comes as a 4xx/5xx status, not as `ok:false`.
+      required:
+      - ok
+      description: Write confirmation with no body of its own to return.
+    Achado:
+      type: object
+      properties:
+        severity:
+          type: string
+          description: Severity of the finding.
+        code:
+          type: string
+          description: Stable check code, e.g. `title_missing`. It is what you filter by.
+        message:
+          type: string
+          description: The finding in one sentence, ready to show a person.
+      required:
+      - severity
+      - code
+      - message
+      description: A problem (or a pass) found on the page.
     ResumoPagina:
       type: object
       properties:
@@ -645,6 +609,42 @@ components:
       - robotsTxt
       - sitemap
       description: Everything the page declares about itself. It is the most consulted object of the API.
+    Aba:
+      type: object
+      properties:
+        id:
+          type: string
+          description: ID of the tab.
+        url:
+          type: string
+          description: URL the tab follows.
+        alias:
+          type: string
+          description: Label the person gave the tab.
+          nullable: true
+        active:
+          type: boolean
+          description: Whether it is the focused tab in the workspace.
+        audit_id:
+          type: string
+          description: Audit of this tab's last run.
+          nullable: true
+        score:
+          type: integer
+          description: Score of the last run.
+          nullable: true
+        created_at:
+          type: string
+          description: When the tab was opened (UTC).
+      required:
+      - id
+      - url
+      - alias
+      - active
+      - audit_id
+      - score
+      - created_at
+      description: 'A workspace tab: one followed URL, with the last result kept.'
   securitySchemes:
     bearerAuth:
       type: http
