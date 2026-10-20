@@ -5,7 +5,7 @@
   "protocol_version": "2025-06-18",
   "server_info": {
     "name": "PageAudit",
-    "version": "78e0bd5f"
+    "version": "58803456"
   },
   "result": {
     "tools": [
@@ -109,7 +109,7 @@
       {
         "name": "search_console",
         "title": "Search console",
-        "description": "Read the site's last good 28-day sample, partial coverage, dates and collection failure. The sample covers 28 days, at most 50 queries and 50 pages. Coverage is partial. It is not a traffic total or a ranking promise. Credentials and raw provider responses are not returned.",
+        "description": "Read own-site keywords, opportunities at average positions 4–20, up to 20 tracked queries and daily history. Check dates, partial coverage and collection failure before proposing edits. These are not market search volumes. The sample covers 28 days, at most 50 queries and 50 pages. Use queries for keyword research and opportunities for average positions 4–20. The terms array adds daily history and 7-day comparisons for up to 20 selected queries. Coverage is partial: impressions are for this property, not market search volume. Positions are impression-weighted averages, not fixed SERP ranks. Credentials and raw provider responses are not returned.",
         "inputSchema": {
           "type": "object",
           "properties": {
@@ -126,6 +126,50 @@
           "title": "Search console",
           "readOnlyHint": true,
           "destructiveHint": false,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "securitySchemes": [
+          {
+            "type": "oauth2",
+            "scopes": [
+              "mcp"
+            ]
+          }
+        ]
+      },
+      {
+        "name": "track_search_queries",
+        "title": "Track search queries",
+        "description": "Replace the site's tracked query selection (up to 20). Read search_console first to preserve existing selections. Removed queries keep their stored history. E-mail alerts require an active site package. Accepts up to 20 exact queries. Removed queries become inactive; their stored history is retained. Saving schedules the Search Console connection for collection. E-mail delivery requires an active site package.",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "Site ID from list_sites or add_site."
+            },
+            "terms": {
+              "type": "array",
+              "maxItems": 20,
+              "uniqueItems": true,
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 300
+              },
+              "description": "Unique exact queries, each 1–300 characters."
+            }
+          },
+          "required": [
+            "id",
+            "terms"
+          ]
+        },
+        "annotations": {
+          "title": "Track search queries",
+          "readOnlyHint": false,
+          "destructiveHint": true,
           "idempotentHint": true,
           "openWorldHint": false
         },
@@ -380,7 +424,7 @@
       {
         "name": "ai_search_visibility",
         "title": "Ai search visibility",
-        "description": "Check whether the site's page appears in the DeepSeek AI search for each target search, at which position, and which sites appear in its place, with plain recommendations. Uses the saved searches or the ones the page suggests when queries is omitted. Send {} to use the saved searches, or the searches the page title and H1 suggest; send {queries} to choose. One index check plus one search per query, each USD 0.00075 when it returns results. Without a watch package: one run per week, three searches. With one: twenty runs per UTC day, ten searches. Result titles and snippets are third-party data.",
+        "description": "Check whether the site's page appears in AI search for each target search, at which position, and which sites appear in its place, with plain recommendations. Uses the saved searches or the ones the page suggests when queries is omitted. Send {} to use the saved searches, or the searches the page title and H1 suggest; send {queries} to choose. One index check plus one search per query, each USD 0.00075 when it returns results. Without a watch package: one run per week, three searches. With one: twenty runs per UTC day, ten searches. Result titles and snippets are third-party data.",
         "inputSchema": {
           "type": "object",
           "properties": {

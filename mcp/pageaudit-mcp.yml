@@ -386,16 +386,16 @@ tools:
     - form_ts
   source_operation: openapi/pageaudit-openapi.json#contact
 tool_quality:
-  tool_count: 47
-  tokens_total: 9987
-  tokens_per_tool_median: 202
+  tool_count: 48
+  tokens_total: 10332
+  tokens_per_tool_median: 212
   heavy_tools: []
   heavy_tool_count: 0
-  params_total: 111
+  params_total: 113
   params_undescribed: 11
-  params_described_pct: 90.1
+  params_described_pct: 90.3
   tools_with_undescribed_params: 11
-  tools_annotated: 47
+  tools_annotated: 48
   annotated_pct: 100.0
   state_changing_unhinted: []
   tools_missing_schema: 0
