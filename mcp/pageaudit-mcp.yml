@@ -30,6 +30,160 @@ server:
   url: https://pageaudit.online/mcp
   version: f5ac3ca0
 tools:
+- name: list_sites
+  description: Read up to 50 sites owned by the signed-in account. Follow next_cursor.
+- name: add_site
+  description: Add a site to the account. No site count limit. An account holds up to 1,000 sites (409
+    site_limit). The existing guest audit workspace stays separate.
+- name: get_site
+  description: Read one site owned by the signed-in account.
+- name: search_console
+  description: Read the site's last good 28-day sample, partial coverage, dates and collection failure.
+    The sample covers 28 days, at most 50 queries and 50 pages. Coverage is partial. It is not a traffic
+    total or a ranking promise. Credentials and raw provider responses are not returned.
+- name: connect_search_console
+  description: Start read-only Google consent. The account owner must follow redirect in their browser.
+    Follow redirect in the account's browser. Consent expires after five minutes. The callback is single-use
+    and bound to the account and site. The property must match the site and Google must authorize it before
+    the connection is saved.
+- name: sync_search_console
+  description: Collect a due sample. Repeated calls cannot bypass the daily reservation. The hourly schedule
+    uses the same durable reservation. A failure preserves the last good sample and schedules the next
+    attempt 24 hours later. This route cannot force an extra collection.
+- name: disconnect_search_console
+  description: Remove the local Google credential and stop collection. Keep the last good sample. The
+    last good sample stays available. An in-flight callback or collection cannot reconnect the site.
+- name: weekly_site_report
+  description: 'Read the weekly report of a site: what changed since last week, the new pages of up to
+    3 competitors and every finding. Reading never runs the report. Once a week the report checks the
+    first 500 URLs of the site''s sitemap, says what changed since the week before (new and fixed problems,
+    new pages) and lists the new pages of up to 3 competitor sitemaps. Reading never runs the report.'
+- name: save_weekly_site_report
+  description: Turn the weekly report of a site on or off and set up to 3 competitors. Turning on needs
+    a watch package in force. Turning on needs a watch package in force and a free site in it (409 with
+    `limit` and `plans` otherwise). The first report runs right away; later ones run a week after the
+    last. A new competitor gets its base this week and its new pages from the next. Saves use the expected
+    version.
+- name: weekly_site_report_history
+  description: Read one weekly report of a site's history by its id.
+- name: ai_search_visibility
+  description: 'Check whether the site''s page appears in the DeepSeek AI search for each target search,
+    at which position, and which sites appear in its place, with plain recommendations. Uses the saved
+    searches or the ones the page suggests when queries is omitted. Send {} to use the saved searches,
+    or the searches the page title and H1 suggest; send {queries} to choose. One index check plus one
+    search per query, each USD 0.00075 when it returns results. Without a watch package: one run per week,
+    three searches. With one: twenty runs per UTC day, ten searches. Result titles and snippets are third-party
+    data.'
+- name: ai_search_history
+  description: 'Read the plan, the saved searches, the last runs and the position trend of each search.
+    Reads never call the search engine. The trend compares each search of the newest run with the previous
+    run that had it: up, down, same, new or lost.'
+- name: save_ai_search_queries
+  description: Save up to ten searches for the weekly report to track (three without a watch package).
+    Saves use the expected version. Without a current watch package, an account tracks up to three searches.
+    Uses the shared 240 writes per site and UTC day.
+- name: journeys
+  description: Read the owned site's installation, actions, paths and ordered conversion funnel for the
+    last seven days. Requires the account's browser session. Only this site's owner can read it. Data
+    updates through the shared realtime transport. No user identity, typed text or screen recording.
+- name: connection_review
+  description: Requires the account session, current X-Organization-Id and CSRF for writes. Read today's
+    private TLS review without starting a scan. One review per account, organization, origin and UTC day.
+    Starting requires current domain monitoring rights. The account has three starts per UTC day. Retries
+    return the same review. The scanner samples one public IP, with three stages and a 170-second deadline.
+    Partial results do not establish safety. GET never starts a scan. The shared realtime channel reports
+    stage changes. Reports expire after 26 hours.
+- name: review_connection
+  description: Requires the account session, current X-Organization-Id and CSRF for writes. Start a TLS
+    review of the saved HTTPS origin using current domain monitoring rights. At most three starts per
+    account and UTC day, one per site. A repeated request reuses today's review. Do not claim complete
+    safety from a partial result. One review per account, organization, origin and UTC day. Starting requires
+    current domain monitoring rights. The account has three starts per UTC day. Retries return the same
+    review. The scanner samples one public IP, with three stages and a 170-second deadline. Partial results
+    do not establish safety. GET never starts a scan. The shared realtime channel reports stage changes.
+    Reports expire after 26 hours.
+- name: cancel_connection_review
+  description: Requires the account session, current X-Organization-Id and CSRF for writes. Cancel the
+    current TLS review and preserve completed evidence. One review per account, organization, origin and
+    UTC day. Starting requires current domain monitoring rights. The account has three starts per UTC
+    day. Retries return the same review. The scanner samples one public IP, with three stages and a 170-second
+    deadline. Partial results do not establish safety. GET never starts a scan. The shared realtime channel
+    reports stage changes. Reports expire after 26 hours.
+- name: domain_portfolio
+  description: Requires the account session, current X-Organization-Id and CSRF for writes. Read cached
+    domain monitoring and deadlines for selected saved pages. Does not start external collection or activate
+    monitoring. Every tab must belong to the current account and organization. Repeat with the next group
+    of IDs for a larger workspace.
+- name: preview_domain_alerts
+  description: Requires the account session, current X-Organization-Id and CSRF for writes. Review the
+    exact selected domains before changing renewal notices. Select up to 25 saved pages. Repeated registrable
+    domains count once. The server checks the account, organization and current revisions again. A stale
+    preview changes nothing.
+- name: apply_domain_alerts
+  description: Requires the account session, current X-Organization-Id and CSRF for writes. Apply the
+    reviewed selection. Requires the preview from preview_domain_alerts. A stale preview changes nothing.
+    Select up to 25 saved pages. Repeated registrable domains count once. The server checks the account,
+    organization and current revisions again. A stale preview changes nothing.
+- name: domain_status
+  description: Read registration, contact visibility, TLS, DNS, CAA, mail policies, certificate issuance
+    and a limited server comparison. Read source dates and collection gaps. Private options require the
+    account session. A discovered name never starts monitoring automatically. Pages share public observations
+    by registry domain and HTTPS origin. Private settings and history stay with the account and organization.
+    Missing data is not a healthy result.
+- name: check_domain
+  description: Refresh due registration, contacts, TLS, DNS, mail policies, certificate issuance and a
+    limited DNS/TLS sample. Reuses fresh public data. Reuse fresh observations. A failed or partial query
+    preserves the last complete observation and its date. Up to 100 cold page reads per owner and UTC
+    day.
+- name: set_domain_expiry
+  description: Requires the account session, current X-Organization-Id and CSRF for writes. Set or remove
+    the private manual expiry. Send manual_expires_on, dns, or both. Omitted settings are preserved. DNS
+    requires both selectors and rotating_addresses. An identical retry is idempotent. A conflicting revision
+    returns 409.
+- name: configure_domain_dns
+  description: Requires the account session, current X-Organization-Id and CSRF for writes. Set up to
+    three known DKIM selectors and choose whether IP rotation is expected. Expected rotation keeps history
+    without notices; alias changes still notify. Does not discover selectors, enable monitoring or authenticate
+    sent messages. Send manual_expires_on, dns, or both. Omitted settings are preserved. DNS requires
+    both selectors and rotating_addresses. An identical retry is idempotent. A conflicting revision returns
+    409.
+- name: configure_domain_monitor
+  description: Requires the account session, current X-Organization-Id and CSRF for writes. Enable or
+    stop domain monitoring, or pause notices for maintenance. Count a registry domain once per account,
+    including its organization copies. Add only the tab's origin. HTTP receives DNS checks only. Maintenance
+    pauses notices while collection continues. Confirm enabled, no suspension and next_check_at after
+    saving.
+- name: domain_history
+  description: Requires the account session, current X-Organization-Id and CSRF for writes. Read up to
+    50 private incidents with notice delivery. Send the last event number as before for the next page.
+    A first observed risk is an initial incident, not evidence of an external change. The first DNS and
+    certificate-issuance snapshots are silent baselines. DNS changes, incompatible server samples and
+    connection failures need two distinct observations. Expected IP rotation is silent. Repeated observations
+    do not duplicate a notice. Contact changes expose field states only. Issuance does not prove installation.
+    DNS records do not prove authentication of sent mail.
+- name: acknowledge_domain_event
+  description: Requires the account session, current X-Organization-Id and CSRF for writes. Acknowledge
+    an expected event. Suppress its notice only if sending has not started. Preserve the event and its
+    evidence. Preserve the event and observation. Acknowledgement does not erase a confirmed risk or retract
+    a sent notice. Repetition is idempotent.
+- name: audit_site
+  description: 'Check the first 20 URLs of a site''s sitemap: status, redirects, robots.txt, noindex,
+    canonical, titles and descriptions. Free, without an account. The same site within one hour returns
+    the stored sample. URLs of another host are counted, never requested. The free sample of the SEO audit.
+    URLs of another host are counted, never requested. The same site within one hour returns the stored
+    sample (`cached_at`) without requesting the site again and without spending the allowance.'
+- name: check_ai_access
+  description: 'Request a page as Googlebot, Bingbot and the AI crawlers (OAI-SearchBot, Claude-SearchBot,
+    PerplexityBot, ChatGPT-User, GPTBot, ClaudeBot) and see who gets a 403, a 429 or a firewall challenge
+    that robots.txt does not show. Also returns the date of the newest sitemap lastmod and whether Cloudflare
+    is in front. Free, without an account. The same page within one hour returns the stored result. The
+    page is requested with the published user agent of Googlebot, Bingbot, OAI-SearchBot, Claude-SearchBot,
+    PerplexityBot, ChatGPT-User, GPTBot, ClaudeBot, and once as a browser. A 403, a 429 or a firewall
+    challenge that only a crawler gets is the block that robots.txt does not show. The sitemap is the
+    one that robots.txt declares, or `/sitemap.xml`; it is stale when its newest `lastmod` is more than
+    30 days old. Limit: Cloudflare recognises the real crawler by its IP address, so a rule that trusts
+    verified bots can treat the real crawler differently. The same page within one hour returns the stored
+    result (`cached_at`) without requesting the site again.'
 - name: api_index
   description: Discovers the whole PageAudit API (self-describing index).
   inputSchema:
@@ -37,7 +191,7 @@ tools:
     properties: {}
   source_operation: openapi/pageaudit-openapi.json#api_index
 - name: health
-  description: Liveness and deployed build.
+  description: Liveness and the commit deployed right now — it is how the smoke waits for its own deploy.
   inputSchema:
     type: object
     properties: {}
@@ -60,8 +214,10 @@ tools:
     - slug
   source_operation: openapi/pageaudit-openapi.json#get_tool
 - name: audit_url
-  description: Audits a URL and returns the full report with the ready fix for each finding (`fixes`),
-    without a tab.
+  description: 'Check a web page''s search metadata, crawl access, structured data and selected discovery
+    files. Return evidence, limits and suggested changes without creating a saved tab. A blocked target
+    returns HTTP 502 with target_blocked. The report does not certify security or accessibility. This
+    is the product for agents. The free alternative: a person signs in with an account to get the trial.'
   inputSchema:
     type: object
     properties:
@@ -75,13 +231,17 @@ tools:
     - url
   source_operation: openapi/pageaudit-openapi.json#audit_url
 - name: create_guest
-  description: Creates a guest token pa_… for the tab workspace.
+  description: 'Creates a guest token pa_… for the tab workspace. Keep the token: it is the identity of
+    the tabs and of the audits tied to them.'
   inputSchema:
     type: object
     properties: {}
   source_operation: openapi/pageaudit-openapi.json#create_guest
 - name: list_tabs
-  description: Lists the owner's tabs (guest or session).
+  description: Lists the owner's saved pages (guest or session), with the active page's last report. Group
+    pages by site to match the Projects table. One call loads the saved pages and the active page's last
+    report. The UI groups pages by site in Projects and opens each site in a work tab. The introduction
+    stays in Welcome. A signed-in account sends `X-Organization-Id`; a guest has one temporary workspace.
   inputSchema:
     type: object
     properties:
@@ -91,7 +251,8 @@ tools:
     - guest_token
   source_operation: openapi/pageaudit-openapi.json#list_tabs
 - name: create_tab
-  description: Opens a tab for a URL in the workspace.
+  description: Opens a saved URL. Set queue_audit=false to monitor a discovered origin without a page
+    audit.
   inputSchema:
     type: object
     properties:
@@ -121,6 +282,32 @@ tools:
     - guest_token
     - id
   source_operation: openapi/pageaudit-openapi.json#run_tab
+- name: tab_history
+  description: The tab's previous runs and what changed between each one and the one before it (score
+    delta, findings that appeared and that disappeared). Every run has always been kept; this is where
+    you read the series. Each entry carries the score, the counts and a `change` with the point delta
+    and the findings that appeared (`broke`) or disappeared (`fixed`) since the previous run — compared
+    by finding code, never by message. Runs older than the watch feature are matched by URL.
+- name: watch_tab
+  description: 'Turns the daily watch on or off for a tab: it re-audits the page once a day and e-mails
+    when the score drops or a new error/warning appears. Needs the signed-in account (its browser session
+    cookie); a guest token gets 403 `account_required`. With `monitor: true` the page is re-audited once
+    a day and an e-mail goes out when the score drops or a new error/warning appears — never on an improvement.
+    Watching needs an account (the alert has to reach someone) and each account watches a limited number
+    of pages.'
+- name: lab_test
+  description: 'Starts a lab test of an audit''s page: Lighthouse run by Google PageSpeed Insights (performance,
+    accessibility, best practices, SEO). Answers 202 at once; the test takes ~25 s to 2+ minutes — then
+    read it with lab_result. Does not change the audit score. Answers **202** at once; the test runs for
+    ~25 s to over 2 minutes and its summary is stored in the audit (`summary.lab.<strategy>`), so it comes
+    back in `GET /api/audits/:id`, in the tab and in the shared report. It does not change the audit score.
+    Calling again while the same strategy is running does not start a second test. Limits: 4 tests at
+    a time on the server, 6 per network per hour and 500 per day for the whole product.'
+- name: lab_result
+  description: 'The lab tests of an audit (mobile and desktop): running, finished with scores, metrics
+    and biggest savings, or failed. With wait (up to 25) it answers as soon as a running test finishes.
+    Long-poll: with `wait` the answer comes as soon as a running test finishes, or after `wait` seconds
+    with `status: running`. Repeat until it is not running.'
 - name: get_audit
   description: Re-reads an audit already made, with `fixes` (the ready fix for each finding).
   inputSchema:
@@ -137,7 +324,10 @@ tools:
   source_operation: openapi/pageaudit-openapi.json#get_audit
 - name: get_patch
   description: 'The consolidated patch of an audit: <head> block to paste, files to create and templates
-    with placeholders. No model — only facts from the page.'
+    with placeholders. No model — only facts from the page. Each finding becomes a fix in one of three
+    classes: `deterministico` (comes whole from what the page declares: final URL, title, description,
+    OG), `molde` (a tag with a marked placeholder, like `{{TITULO}}`, and the suggested source) or `sem_patch`
+    (a decision or infrastructure, with the instruction). Nothing is invented by a model.'
   inputSchema:
     type: object
     properties:
@@ -161,16 +351,19 @@ tools:
     required:
     - slug
   source_operation: openapi/pageaudit-openapi.json#get_badge
-- name: billing
-  description: 'Free plan, prices, x402 parameters and the trial offer: sign-up with a confirmed e-mail
-    = 90 days without paywall (`trial` field; with a session it shows the state).'
-  inputSchema:
-    type: object
-    properties: {}
-  source_operation: openapi/pageaudit-openapi.json#billing
+- name: embed_snippet
+  description: The embeddable widget's snippet, already assembled with the site's name and colour — one
+    script tag, no account, no lead capture. One script tag puts the audit form on your own site, with
+    your name and colour, and no account or key. Send the same query you would send to `/embed` and the
+    answer comes back with `snippet` already assembled. The widget never asks the visitor for an e-mail.
 - name: contact
-  description: 'Sends a support message. Agent: no captcha → 402 ($0.10 x402). Human: Turnstile. After
-    the 1st agent message there is backoff: 429 + Retry-After (60s → 2×, 1h cap; resets in 24h).'
+  description: 'Write to the people behind the product: a question, or a sponsorship/partnership/advertising
+    proposal. One route for a question and for a sponsorship, partnership or ad proposal (`tipo`, with
+    the placements of `GET /api/partners`). One message every 10 seconds per network: one that arrives
+    sooner waits its turn and then goes out — no error. The message reaches the team by e-mail, with `email`
+    as the reply address. For voice, send multipart/form-data: `dados` is this JSON (up to 32 KiB), and
+    `audio` is one WebM, Ogg or M4A audio file (up to 2 MB). Audio can replace message. The browser records
+    up to two minutes. Audio is attached to the owner''s e-mail.'
   inputSchema:
     type: object
     properties:
@@ -217,3 +410,4 @@ tool_quality:
   scored: false
   note: Facts from the saved tools/list capture (mcp_tool_quality.py); recorded, not scored. Checks learned
     from Glimind's agent-readiness audit.
+tools_count: 47
