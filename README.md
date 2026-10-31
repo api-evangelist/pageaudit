@@ -1,4 +1,4 @@
-# pageaudit
+# PageAudit
 
 <!-- API-EVANGELIST-PROVENANCE:BEGIN -->
 > ### About this repository
@@ -65,3 +65,141 @@
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
 An agent-first technical SEO auditor that checks a page's search appearance, sharing previews and technical issues, prioritizes fixes, and delivers ready-to-apply patches for head tags, robots and sitemap. Every UI screen has an equivalent endpoint and every resource carries its own API URL.
+
+**Areas:** Technical SEO · SEO auditing · Developer Tools · Agent-Native · MCP · x402
+
+## PageAudit on APIs.io
+
+Everything profiled for PageAudit is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/pageaudit/](https://apis.io/providers/pageaudit/)** — or go straight to one of the APIs or properties below.
+
+### APIs (22)
+
+- [PageAudit Apis.json API](https://apis.io/apis/pageaudit/pageaudit-apis-json-api/) — The Apis.json API from PageAudit — 1 operation(s) for apis.json.
+- [PageAudit Audit API](https://apis.io/apis/pageaudit/pageaudit-audit-api/) — The Audit API from PageAudit — 1 operation(s) for audit.
+- [PageAudit Audits API](https://apis.io/apis/pageaudit/pageaudit-audits-api/) — The Audits API from PageAudit — 3 operation(s) for audits.
+- [PageAudit Auth API](https://apis.io/apis/pageaudit/pageaudit-auth-api/) — The Auth API from PageAudit — 4 operation(s) for auth.
+- [PageAudit Badge API](https://apis.io/apis/pageaudit/pageaudit-badge-api/) — The Badge API from PageAudit — 2 operation(s) for badge.
+- [PageAudit Billing API](https://apis.io/apis/pageaudit/pageaudit-billing-api/) — The Billing API from PageAudit — 1 operation(s) for billing.
+- [PageAudit Contact API](https://apis.io/apis/pageaudit/pageaudit-contact-api/) — The Contact API from PageAudit — 1 operation(s) for contact.
+- [PageAudit Credito API](https://apis.io/apis/pageaudit/pageaudit-credito-api/) — The Credito API from PageAudit — 1 operation(s) for credito.
+- [PageAudit Gate API](https://apis.io/apis/pageaudit/pageaudit-gate-api/) — The Gate API from PageAudit — 1 operation(s) for gate.
+- [PageAudit Guest API](https://apis.io/apis/pageaudit/pageaudit-guest-api/) — The Guest API from PageAudit — 1 operation(s) for guest.
+- [PageAudit Health API](https://apis.io/apis/pageaudit/pageaudit-health-api/) — The Health API from PageAudit — 1 operation(s) for health.
+- [PageAudit MCP API](https://apis.io/apis/pageaudit/pageaudit-mcp-api/) — The Mcp API from PageAudit — 1 operation(s) for mcp.
+- [PageAudit Me API](https://apis.io/apis/pageaudit/pageaudit-me-api/) — The Me API from PageAudit — 1 operation(s) for me.
+- [PageAudit Metrics API](https://apis.io/apis/pageaudit/pageaudit-metrics-api/) — The Metrics API from PageAudit — 1 operation(s) for metrics.
+- [PageAudit Okf API](https://apis.io/apis/pageaudit/pageaudit-okf-api/) — The Okf API from PageAudit — 1 operation(s) for okf.
+- [PageAudit Page Audit API](https://apis.io/apis/pageaudit/pageaudit-pageaudit-api/) — The PageAudit API from PageAudit — 1 operation(s) for pageaudit.
+- [PageAudit R API](https://apis.io/apis/pageaudit/pageaudit-r-api/) — The R API from PageAudit — 1 operation(s) for r.
+- [PageAudit Shared API](https://apis.io/apis/pageaudit/pageaudit-shared-api/) — The Shared API from PageAudit — 1 operation(s) for shared.
+- [PageAudit Tabs API](https://apis.io/apis/pageaudit/pageaudit-tabs-api/) — The Tabs API from PageAudit — 3 operation(s) for tabs.
+- [PageAudit Tools API](https://apis.io/apis/pageaudit/pageaudit-tools-api/) — The Tools API from PageAudit — 4 operation(s) for tools.
+- [PageAudit Visit API](https://apis.io/apis/pageaudit/pageaudit-visit-api/) — The Visit API from PageAudit — 1 operation(s) for visit.
+- [PageAudit .well Known API](https://apis.io/apis/pageaudit/pageaudit-well-known-api/) — The .well Known API from PageAudit — 1 operation(s) for .well known.
+
+### Published properties
+
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
+
+#### MCP servers (1)
+
+Model Context Protocol servers that expose the API to agents.
+
+- [mcp](https://apis.io/servers/pageaudit/mcp/)
+
+#### Agentic access (1)
+
+Which operations an agent can call, which act, and which need a human in the loop.
+
+- [Pageaudit Agentic Access](https://apis.io/agentic-access/pageaudit/pageaudit-agentic-access/)
+
+#### Overlays (1)
+
+OpenAPI overlays, including conversational phrasing for each operation.
+
+- [Pageaudit Openapi Overlay](https://apis.io/overlays/pageaudit/pageaudit-openapi-overlay/)
+
+#### Security (3)
+
+Authentication, trust centre, and vulnerability disclosure.
+
+- [Pageaudit Authentication](https://apis.io/security/pageaudit/pageaudit-authentication/)
+- [Pageaudit Domain Security](https://apis.io/security/pageaudit/pageaudit-domain-security/)
+- [Pageaudit Vulnerability Disclosure](https://apis.io/security/pageaudit/pageaudit-vulnerability-disclosure/)
+
+#### Plans and pricing (1)
+
+Published plans, tiers and prices.
+
+- [Pageaudit Plans Pricing](https://apis.io/plans/pageaudit/pageaudit-plans-pricing/)
+
+#### Rate limits (1)
+
+Published request limits.
+
+- [Pageaudit Rate Limits](https://apis.io/rate-limits/pageaudit/pageaudit-rate-limits/)
+
+## Where to find this API
+
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
+
+- [Website](https://pageaudit.online/)
+- [Pricing](https://pageaudit.online/api/billing)
+- [Security](https://pageaudit.online/.well-known/security.txt)
+- [Terms of service](https://pageaudit.online/terms)
+- [Privacy policy](https://pageaudit.online/privacy)
+
+## API Evangelist rating
+
+**Kin Score 46.0** — developing · rubric 0.25.0 · scored 2026-10-23
+
+| Facet | Score |
+|---|---|
+| Discoverability | 66.7 |
+| Contract quality | 48.4 |
+| Contract governance | 18.2 |
+| Operational transparency | 36.8 |
+| Developer ergonomics | 30.4 |
+| Access clarity | 63.2 |
+
+**Agent readiness 40.0** — agent-ready (gated down from agent-native)
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | yes |
+| Agentic Access | derived (partial credit) |
+| Reversibility Documented | — |
+| MCP Server | verified |
+| Auth Clarity | bearer (partial credit) |
+| Idempotency | documented (partial credit) |
+| Error Semantics | derived (partial credit) |
+| OpenAPI Examples | partial |
+| Rate Limit Signal | documented (partial credit) |
+| Event Surface Described | — |
+| Agent Skills | derived (partial credit) |
+| Well Known Catalog | yes |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | — |
+| Delegated Identity | — |
+| Protected Resource Metadata | — |
+| Dynamic Client Registration | — |
+| Agentic Commerce | — |
+| Pagination Ratio | na |
+| Operation Distinctiveness | distinct |
+
+**Regulatory alignment 30.4** — Horizontal (data, software, accessibility, platform)
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/pageaudit/](https://apis.io/providers/pageaudit/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for PageAudit: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/pageaudit/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
